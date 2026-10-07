@@ -1,0 +1,3 @@
+source "%val{config}/colors/purple_best.kak"
+
+map global normal ' ' :exec 'i<space><esc>'
