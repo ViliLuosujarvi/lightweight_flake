@@ -15,10 +15,6 @@
   networking.hostName = "nixos-vm";
   networking.networkmanager.enable = true;
 
-  # So you can reach the VM over SSH instead of needing console/VT access
-  # for maintenance tasks like `passwd`.
-  services.openssh.enable = true;
-
   time.timeZone = "UTC";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";
