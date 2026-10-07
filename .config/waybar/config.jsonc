@@ -6,11 +6,10 @@
     "margin-left": 12,
     "margin-right": 12,
     "spacing": 8,
-    "output": "eDP-1",
     "modules-left": ["clock", "hyprland/workspaces"],
     //"modules-center": ["clock", "custom/weather"],
     //"modules-right": ["network", "group/system-info", "disk", "memory", "custom/nvidia", "group/cpu_info", "battery", "tray"],
-      "modules-right": ["network", "custom/nvidia", "group/cpu_info", "memory" ,"disk", "group/system-info", "pulseaudio#microphone", "battery", "tray"],
+      "modules-right": ["network", "group/cpu_info", "memory" ,"disk", "group/system-info", "pulseaudio#microphone", "tray"],
 
 
 
@@ -264,9 +263,9 @@
     "group/system-info": {
 	"orientation": "horizontal",
 	"modules": [
-		"pulseaudio",
+		"pulseaudio"
 		//"pulseaudio#microphone",
-		"backlight"
+		//"backlight"
 	]
     },
 

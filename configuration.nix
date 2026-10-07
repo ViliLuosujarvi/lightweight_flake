@@ -2,15 +2,19 @@
 
 {
   imports = [
-    # `nixos-generate-config` writes this to /etc/nixos/hardware-configuration.nix
-    # on every NixOS machine by default, so this always picks up whatever the
-    # machine it's built on actually detected - no copying into the flake needed.
+    # Picks up whatever `nixos-generate-config` detected on the machine being
+    # built. This is an absolute path outside the flake, so evaluation must
+    # be impure: `nixos-rebuild switch --flake .#nixos-vm --impure`.
     /etc/nixos/hardware-configuration.nix
   ];
 
   # --- Boot (UEFI) ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  # --- Nix ---
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
 
   networking.hostName = "nixos-vm";
   networking.networkmanager.enable = true;
@@ -30,6 +34,9 @@
   };
 
   programs.zsh.enable = true;
+
+  # Hooks direnv into zsh and ships nix-direnv (fast, cached `use flake`).
+  programs.direnv.enable = true;
 
   # --- Login manager (greetd + tuigreet) ---
   # TUI greeter: draws a login prompt directly on the console, no graphics

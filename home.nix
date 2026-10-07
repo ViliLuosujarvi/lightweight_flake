@@ -40,12 +40,14 @@ in
     btop
     #neofetch
     wallust
-    direnv
     kitty
     rofi
     emacs
     firefox
     #claude-code
+
+    # foot, kitty and waybar configs all use "FiraCode Nerd Font Mono"
+    nerd-fonts.fira-code
   ];
 
   fonts.fontconfig.enable = true;
