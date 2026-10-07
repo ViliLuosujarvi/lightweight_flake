@@ -44,6 +44,8 @@ in
     kitty
     rofi
     emacs
+    firefox
+
   ];
 
   fonts.fontconfig.enable = true;

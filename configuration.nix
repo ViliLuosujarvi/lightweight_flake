@@ -15,6 +15,10 @@
   networking.hostName = "nixos-vm";
   networking.networkmanager.enable = true;
 
+  # So you can reach the VM over SSH instead of needing console/VT access
+  # for maintenance tasks like `passwd`.
+  services.openssh.enable = true;
+
   time.timeZone = "UTC";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";
@@ -24,6 +28,9 @@
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" ];
     shell = pkgs.zsh;
+    # Only applied if the account has no password set yet - won't overwrite
+    # a password you later set yourself with `passwd`. Change it after login.
+    initialPassword = "changeme";
   };
 
   programs.zsh.enable = true;
