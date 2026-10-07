@@ -1,5 +1,27 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
+let
+  # Recursively walk a directory and turn every regular file it contains
+  # into an xdg.configFile entry, keyed by its path relative to that
+  # directory - so ./.config/hypr/UserConfigs/Keybinds.conf becomes the
+  # xdg.configFile key "hypr/UserConfigs/Keybinds.conf", symlinked from the
+  # nix store at ~/.config/hypr/UserConfigs/Keybinds.conf.
+  #
+  # Each file gets its own symlink (rather than symlinking whole directories
+  # wholesale) so that apps which write runtime state next to their config
+  # (btop's log, emacs' eln-cache/auto-save-list, etc.) still get a normal,
+  # writable directory to do that in.
+  configFilesOf = dir:
+    lib.concatMapAttrs
+      (name: type:
+        let path = dir + "/${name}"; in
+        if type == "directory" then
+          lib.mapAttrs' (k: v: lib.nameValuePair "${name}/${k}" v) (configFilesOf path)
+        else
+          { ${name} = { source = path; }; }
+      )
+      (builtins.readDir dir);
+in
 {
   home.username = "user";
   home.homeDirectory = "/home/user";
@@ -9,11 +31,22 @@
 
   programs.home-manager.enable = true;
 
+  programs.foot.enable = true;
+
   home.packages = with pkgs; [
-    foot
     kakoune
     waybar
+    fastfetch
+    btop
+    neofetch
+    wallust
+    direnv
+    kitty
+    rofi-wayland
+    emacs
   ];
+
+  fonts.fontconfig.enable = true;
 
   home.sessionVariables = {
     EDITOR = "kak";
@@ -21,17 +54,11 @@
   };
 
   # --- Dotfiles ---
-  # Adapted from https://github.com/ViliLuosujarvi/.dotfiles, hosts/Laptop
-  # (hostname NanSuS-Laptop) - trimmed down from that laptop's full JaKooLit-based
-  # Hyprland setup to what a GPU-less, single-monitor VM actually needs: no
-  # NVIDIA env vars, no multi-monitor rules, no app binds for software that
-  # isn't installed here (Steam, Discord, rofi, dolphin, etc).
-  xdg.configFile = {
-    "hypr/hyprland.conf".text = builtins.readFile ./dotfiles/hyprland.conf;
-    "waybar/config.jsonc".text = builtins.readFile ./dotfiles/waybar-config.jsonc;
-    "waybar/style.css".text = builtins.readFile ./dotfiles/waybar-style.css;
-    "kak/kakrc".text = builtins.readFile ./dotfiles/kakrc;
-    "kak/colors/purple_best.kak".text = builtins.readFile ./dotfiles/purple_best.kak;
-    "foot/foot.ini".text = builtins.readFile ./dotfiles/foot.ini;
-  };
+  # Everything under ./.config is the real, untrimmed desktop config from
+  # https://github.com/ViliLuosujarvi/.dotfiles (hosts/Laptop), symlinked
+  # in as-is. Some of it (NVIDIA env vars, multi-monitor rules, keybinds for
+  # apps like Steam/Discord/dolphin that aren't installed here) won't do
+  # anything useful on a lightweight VM, but it's kept verbatim rather than
+  # re-trimmed.
+  xdg.configFile = configFilesOf ./.config;
 }

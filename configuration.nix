@@ -28,14 +28,17 @@
 
   programs.zsh.enable = true;
 
-  # Autologin on tty1, then exec Hyprland straight from the login shell.
-  # No display manager at all -> lightest possible path to a graphical session.
-  services.getty.autologinUser = "user";
-  programs.zsh.loginShellInit = ''
-    if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-      exec Hyprland
-    fi
-  '';
+  # --- Login manager (greetd + tuigreet) ---
+  # TUI greeter: draws a login prompt directly on the console, no graphics
+  # stack of its own, then execs the chosen session command. The regular,
+  # systemd-managed way to start Hyprland instead of an autologin shell hack.
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+      user = "greeter";
+    };
+  };
 
   # --- Hyprland ---
   programs.hyprland.enable = true;
