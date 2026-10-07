@@ -45,7 +45,7 @@ in
     rofi
     emacs
     firefox
-
+    claude-code
   ];
 
   fonts.fontconfig.enable = true;
