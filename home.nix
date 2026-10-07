@@ -36,9 +36,9 @@ in
   home.packages = with pkgs; [
     kakoune
     waybar
-    fastfetch
+    #fastfetch
     btop
-    neofetch
+    #neofetch
     wallust
     direnv
     kitty
