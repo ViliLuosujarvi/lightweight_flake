@@ -42,7 +42,7 @@ in
     wallust
     direnv
     kitty
-    rofi-wayland
+    rofi
     emacs
   ];
 
