@@ -4,4 +4,4 @@ source "~/.config/kak/colors/purple_best.kak"
 
 
 
-map global normal ' ' ':exec i<space><esc>'
+map global normal <space> 'i<space><esc>'

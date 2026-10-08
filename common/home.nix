@@ -23,6 +23,7 @@
     rofi
     firefox
     networkmanagerapplet
+    pavucontrol # waybar volume module, left click
     claude-code
 
 
@@ -36,4 +37,12 @@
     EDITOR = "kak";
     TERMINAL = "foot";
   };
+
+  # zsh itself is configured system-wide (system/aliases.nix), so home-manager
+  # doesn't manage it and wouldn't load home.sessionVariables on its own. This
+  # ~/.zshrc does that, and also stops zsh's first-run setup wizard. Accounts
+  # append their own lines to it in their home.nix.
+  home.file.".zshrc".text = lib.mkBefore ''
+    source ${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh
+  '';
 }

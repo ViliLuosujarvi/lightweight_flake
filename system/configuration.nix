@@ -36,13 +36,19 @@
   programs.zsh.enable = true;
 
   # --- Shared flake checkout ---
-  # This flake lives in /srv/nixos-config so both accounts (both in wheel) can
-  # edit and rebuild it. The setgid bit and default ACL keep every new file
-  # group-writable regardless of who creates it or their umask, and
-  # safe.directory stops git/nix refusing a repo owned by the other account.
+  # This flake lives in /srv/nixos-config, owned by "user", who commits and
+  # runs `nrs`. pentest gets write access to users/pentest only (ACL, incl.
+  # default entries so files either account creates stay writable by both),
+  # which is enough to edit its own home and `hms` it, but not the system
+  # config root builds. safe.directory lets pentest run git in the checkout.
+  #
+  # Migrating from the old shared-wheel layout, run once as "user" before nrs:
+  #   sudo setfacl -R -b /srv/nixos-config
+  #   sudo chown -R user:users /srv/nixos-config
+  #   sudo chmod -R g-ws /srv/nixos-config
   systemd.tmpfiles.rules = [
-    "d /srv/nixos-config 2775 root wheel - -"
-    "A+ /srv/nixos-config - - - - group:wheel:rwX,default:group:wheel:rwX,mask::rwx,default:mask::rwx"
+    "d /srv/nixos-config 0755 user users - -"
+    "A+ /srv/nixos-config/users/pentest - - - - user:pentest:rwX,default:user:pentest:rwX,default:user:user:rwX,mask::rwx,default:mask::rwx"
   ];
   programs.git = {
     enable = true;

@@ -12,8 +12,23 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      # Standalone home-manager: each account applies its own home with
+      # `hms` (home-manager switch, no sudo), so pentest can manage its own
+      # packages and dotfiles without being in wheel.
+      homeFor = name: home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./users/${name}/home.nix ];
+      };
     in
     {
+      # Applied by `nrs` as root. This must never import anything under
+      # users/pentest: pentest can write there, and root evaluating it would
+      # hand pentest root.
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
@@ -21,19 +36,15 @@
           ./system/aliases.nix
           ./system/pentest.nix
 
-          # Applies both accounts' home-manager configs as part of the system
-          # build, so the pentest account gets its packages and dotfiles without
-          # needing its own copy of this flake or a manual home-manager bootstrap.
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            # Existing unmanaged files are moved aside instead of aborting.
-            home-manager.backupFileExtension = "bak";
-            home-manager.users.user = import ./users/user/home.nix;
-            home-manager.users.pentest = import ./users/pentest/home.nix;
-          }
+          # The home-manager CLI from the same pinned input the homes are
+          # built with, so `hms` works on a fresh install.
+          { environment.systemPackages = [ home-manager.packages.${system}.home-manager ]; }
         ];
+      };
+
+      homeConfigurations = {
+        user = homeFor "user";
+        pentest = homeFor "pentest";
       };
     };
 }

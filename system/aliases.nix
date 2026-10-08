@@ -15,12 +15,15 @@ in
   ];
 
   environment.shellAliases = {
-    # NixOS + home-manager. home-manager runs as a NixOS module, so there is no
-    # separate `home-manager switch`: nrs applies the system and both accounts'
-    # homes from the pinned flake.lock; update bumps the inputs first. They use
-    # the shared checkout (see configuration.nix) so either account can run them.
+    # NixOS + home-manager, from the shared checkout (see configuration.nix).
+    # nrs applies the system (needs sudo, so "user" only). hms applies the
+    # current account's own home from homeConfigurations.$USER, no sudo; run
+    # it as each account after the first install. update bumps the pinned
+    # inputs, then rebuilds the system and your home ("user" only). -b bak
+    # moves an existing unmanaged file aside instead of aborting.
     nrs = "sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure";
-    update = "nix flake update --flake ${flake} && sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure";
+    hms = "home-manager switch -b bak --flake ${flake}#$USER";
+    update = "nix flake update --flake ${flake} && sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure && home-manager switch -b bak --flake ${flake}#$USER";
     nfu = "nix flake update";
     ncg = "nix-collect-garbage --delete-older-than";
     ncgo = "nix-collect-garbage -d";

@@ -14,7 +14,14 @@ autoload -Uz add-zsh-hook
 # One `git status` call per prompt: branch, ahead/behind, staged, modified,
 # untracked. Printed as "(branch * +1 ~2 ?3 ahead 1 behind 1) " in yellow,
 # nothing outside a repository.
+#
+# `git status` honours the repository's own .git/config, so just cd-ing into a
+# downloaded repo (a dumped .git from a target, an extracted tarball) could
+# run its core.fsmonitor command; that is switched off here. A filter driver
+# in that config could still run, so accounts that handle untrusted repos set
+# PROMPT_NO_GIT=1 in ~/.zshrc to leave git out of the prompt entirely.
 function _prompt_git() {
+  [[ -n $PROMPT_NO_GIT ]] && return
   command git rev-parse --is-inside-work-tree &>/dev/null || return
 
   local branch="" ahead=0 behind=0 staged=0 modified=0 untracked=0 line
@@ -32,9 +39,12 @@ function _prompt_git() {
       'u '*) (( modified++ )) ;;
       '? '*) (( untracked++ )) ;;
     esac
-  done < <(command git status --porcelain=v2 --branch 2>/dev/null)
+  done < <(command git -c core.fsmonitor=false status --porcelain=v2 --branch 2>/dev/null)
 
   [[ $branch == '(detached)' ]] && branch=$(command git rev-parse --short HEAD 2>/dev/null)
+  # The prompt expands % sequences after substituting this in, so a branch
+  # named e.g. "x%F{red}" must not be able to restyle (or garble) the prompt.
+  branch=${branch//\%/%%}
 
   local out="%F{yellow}(${branch}"
   (( staged + modified + untracked )) && out+=" %F{red}*%F{yellow}"
@@ -55,7 +65,7 @@ add-zsh-hook precmd _prompt_precmd
 
 # Python virtualenv name, if one is active.
 function _prompt_venv() {
-  [[ -n $VIRTUAL_ENV ]] && print -rn -- "%F{cyan}(${VIRTUAL_ENV:t})%f "
+  [[ -n $VIRTUAL_ENV ]] && print -rn -- "%F{cyan}(${${VIRTUAL_ENV:t}//\%/%%})%f "
 }
 
 # --- Prompt -----------------------------------------------------------------

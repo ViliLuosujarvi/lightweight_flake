@@ -37,7 +37,7 @@ function _git_log_prettily() {
 }
 
 alias grt='cd "$(git rev-parse --show-toplevel || echo .)"'
-alias ggpur='ggu'
+alias ggpur='git pull --rebase origin "$(git_current_branch)"'
 alias g='git'
 alias ga='git add'
 alias gaa='git add --all'

@@ -11,9 +11,27 @@ in
 
   # Programming / daily-use extras on top of the common desktop.
   home.packages = with pkgs; [
-    emacs
     proton-vpn
   ];
+
+  # Emacs with every package .config/emacs/init.el `require`s; plain emacs
+  # has none of them and init.el stops at the first missing one.
+  programs.emacs = {
+    enable = true;
+    extraPackages = epkgs: with epkgs; [
+      vertico
+      orderless
+      corfu
+      evil
+      projectile
+      treemacs
+      doom-modeline
+      dashboard
+      nerd-icons
+      nerd-icons-dired
+      nerd-icons-completion
+    ];
+  };
 
   # --- Dotfiles ---
   # Everything under ./.config is symlinked in as-is. Derived from the laptop
