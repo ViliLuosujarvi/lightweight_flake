@@ -12,14 +12,12 @@
   ];
 
   environment.shellAliases = {
-    # NixOS / home-manager. The flake is expected at ~/nixos-config, so these
-    # work from any directory, and hms/update build the config of whichever
-    # account runs them ($USER = "user" or "pentest"). --impure is needed
-    # because configuration.nix imports /etc/nixos/hardware-configuration.nix.
-    hms = "home-manager switch --flake $HOME/nixos-config#$USER";
-    nrs = "sudo nixos-rebuild switch --flake $HOME/nixos-config#nixos-vm --impure";
-    update = "home-manager switch --flake $HOME/nixos-config#$USER";
-    upgrade = "sudo nixos-rebuild switch --flake $HOME/nixos-config#nixos-vm --impure";
+    # NixOS + home-manager. home-manager runs as a NixOS module, so there is no
+    # separate `home-manager switch`: nrs applies the system and both accounts'
+    # homes from the pinned flake.lock; update bumps the inputs first. The path
+    # is absolute (not $HOME) so the pentest account can run them too.
+    nrs = "sudo nixos-rebuild switch --flake /home/user/nixos-config#nixos-vm --impure";
+    update = "nix flake update --flake /home/user/nixos-config && sudo nixos-rebuild switch --flake /home/user/nixos-config#nixos-vm --impure";
     nfu = "nix flake update";
     ncg = "nix-collect-garbage --delete-older-than";
     ncgo = "nix-collect-garbage -d";

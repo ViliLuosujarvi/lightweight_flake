@@ -12,32 +12,27 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
-
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
-      # Standalone home-manager, one config per account:
-      #   home-manager switch --flake .#user
-      #   home-manager switch --flake .#pentest
-      mkHome = name: home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./users/${name}/home.nix ];
-      };
     in
     {
-      homeConfigurations = {
-        user = mkHome "user";
-        pentest = mkHome "pentest";
-      };
-
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
           ./system/configuration.nix
           ./system/aliases.nix
           ./system/pentest.nix
+
+          # Applies both accounts' home-manager configs as part of the system
+          # build, so the pentest account gets its packages and dotfiles without
+          # needing its own copy of this flake or a manual home-manager bootstrap.
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            # Existing unmanaged files are moved aside instead of aborting.
+            home-manager.backupFileExtension = "bak";
+            home-manager.users.user = import ./users/user/home.nix;
+            home-manager.users.pentest = import ./users/pentest/home.nix;
+          }
         ];
       };
     };
