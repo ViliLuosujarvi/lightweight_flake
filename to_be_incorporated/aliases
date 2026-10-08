@@ -1,0 +1,82 @@
+	# NixOS aliases
+	alias update='home-manager switch --flake .#nansus@Home-Laptop'
+	alias hms='home-manager switch --flake .#'
+	# update, upgrade easier to remember xd
+	alias upgrade='sudo nixos-rebuild switch --flake .#Home-Laptop'
+	alias nrs='sudo nixos-rebuild switch --flake .#'
+	alias nfu='nix flake update'
+	alias ncg='nix-collect-garbage --delete-older-than'
+	alias ncgo='nix-collect-garbage --d'
+	alias nd='nix develop'
+	alias ns='nix-shell'
+
+        # Set-up icons for files/folders in terminal using lsd
+        alias ls='lsd'
+        alias l='ls -l'
+        alias la='ls -a'
+        alias lla='ls -la'
+        alias lt='ls --tree'
+
+	alias pws='wpctl status'
+	alias pwds='wpctl set-default'
+
+	# Kill aliases
+	alias pkd='pkill -i discord'
+	alias pks='pkill -i steam'
+	alias pk='pkill -i'
+
+	# annoying as hell to have .dotfiles and .dotnet
+	# in a same place.
+	alias .d='cd ; cd .dotfiles'
+	alias .s='cd ; cd .dotfiles/system/'
+	alias .i='cd ; cd school_stuff/Info_for_NixOS'
+	alias .pt='cd ; cd .dotfiles/hosts/Pentesting/'
+	alias .htb='cd ; cd HTB_Lab'
+
+	# Annoying as hell to also have swaybg and swayimg
+	alias img='swayimg -f' # My dumb ass strugling with this for ten minutes
+			       # just to remember this file isn't governed by home.nix :|
+					# Remember to rebuild !!
+	alias vpn='protonvpn-app'
+	alias .f='cd ; cd school_stuff/Fontys_2026/MA-CSE_2026'
+	alias .t='cd ; cd school_stuff/Thesis'
+	alias .r='cd ; cd rust_projects'
+
+	# And here just to ease my workflow,
+	# some aliases to jump to computer configs
+	alias .home-desktop='cd ; cd .dotfiles/hosts/Home-Desktop/'
+	alias .laptop='cd ; cd .dotfiles/hosts/Laptop/'
+	alias .slave='cd ; cd .dotfiles/hosts/Slave'
+
+	alias .dc='cd ; cd .dotfiles/hosts/Home-Desktop/.config/'
+	alias .lc='cd ; cd .dotfiles/hosts/Laptop/.config/'
+	alias .sc='cd ; cd .dotfiles/hosts/Slave/.config/'
+
+	# nmap aliases
+	alias nmap_open_ports="nmap --open"
+	alias nmap_list_interfaces="nmap --iflist"
+	alias nmap_slow="sudo nmap -sS -v -T1"
+	alias nmap_fin="sudo nmap -sF -v"
+	alias nmap_full="sudo nmap -sS -T4 -PE -PP -PS80,443 -PY -g 53 -A -p1-65535 -v"
+	alias nmap_check_for_firewall="sudo nmap -sA -p1-65535 -v -T4"
+	alias nmap_ping_through_firewall="nmap -PS -PA"
+	alias nmap_fast="nmap -F -T5 --version-light --top-ports 300"
+	alias nmap_detect_versions="sudo nmap -sV -p1-65535 -O --osscan-guess -T4 -Pn"
+	alias nmap_check_for_vulns="nmap --script=vuln"
+	alias nmap_full_udp="sudo nmap -sS -sU -T4 -A -v -PE -PS22,25,80 -PA21,23,80,443,3389 "
+	alias nmap_traceroute="sudo nmap -sP -PE -PS22,25,80 -PA21,23,80,3389 -PU -PO --traceroute "
+	alias nmap_full_with_scripts="sudo nmap -sS -sU -T4 -A -v -PE -PP -PS21,22,23,25,80,113,31339 -PA80,113,443,10042 -PO --script all "
+	alias nmap_web_safe_osscan="sudo nmap -p 80,443 -O -v --osscan-guess --fuzzy "
+	alias nmap_ping_scan="nmap -n -sP"
+
+	alias speed='librespeed-cli --no-icmp --server 51'
+
+	# Python / jupyter aliases
+	alias lab="uv run --with jupyter jupyter lab"
+
+	# History files
+        source <(fzf --zsh);
+        HISTFILE=~/.zsh_history;
+        HISTSIZE=10000;
+        SAVEHIST=10000;
+        setopt appendhistory;
