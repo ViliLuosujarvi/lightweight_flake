@@ -46,6 +46,7 @@ in
     firefox
     claude-code
     networkmanagerapplet
+    proton-vpn
 
     # foot, kitty and waybar configs all use "FiraCode Nerd Font Mono"
     nerd-fonts.fira-code

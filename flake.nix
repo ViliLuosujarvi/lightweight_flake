@@ -27,6 +27,7 @@
         inherit system;
         modules = [
           ./configuration.nix
+          ./aliases.nix
         ];
       };
     };
