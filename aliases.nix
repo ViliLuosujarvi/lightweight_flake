@@ -52,6 +52,14 @@
 
       # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
       source ${./git-aliases.zsh}
+
+      # Git/folder prompt, alias reminders, command-not-found hints
+      source ${./prompt.zsh}
     '';
+
+    # Commands turn red as you type if they don't exist, green if they do;
+    # greyed-out history suggestions (right arrow to accept).
+    syntaxHighlighting.enable = true;
+    autosuggestions.enable = true;
   };
 }

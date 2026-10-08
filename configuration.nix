@@ -38,15 +38,15 @@
   # Hooks direnv into zsh and ships nix-direnv (fast, cached `use flake`).
   programs.direnv.enable = true;
 
-  # --- Login manager (greetd + tuigreet) ---
-  # TUI greeter: draws a login prompt directly on the console, no graphics
-  # stack of its own, then execs the chosen session command. The regular,
-  # systemd-managed way to start Hyprland instead of an autologin shell hack.
-  services.greetd = {
+  # --- Login manager (ly) ---
+  # TUI display manager with built-in background animations (none / doom /
+  # matrix). `animation` sets the default; the key shown at the login screen
+  # switches it. Sessions come from the Wayland session files that
+  # programs.hyprland ships.
+  services.displayManager.ly = {
     enable = true;
-    settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-      user = "greeter";
+    settings = {
+      animation = "matrix";
     };
   };
 
