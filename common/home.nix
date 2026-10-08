@@ -23,6 +23,8 @@
     rofi
     firefox
     networkmanagerapplet
+    claude-code
+
 
     # foot, kitty and waybar configs all use "FiraCode Nerd Font Mono"
     nerd-fonts.fira-code
