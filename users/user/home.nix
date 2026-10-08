@@ -33,6 +33,10 @@ in
     ];
   };
 
+  home.file.".zshrc".text = ''
+    alias vpn=protonvpn-app
+  '';
+
   # --- Dotfiles ---
   # Everything under ./.config is symlinked in as-is. Derived from the laptop
   # dotfiles (github.com/ViliLuosujarvi/.dotfiles) but trimmed for the VM:
