@@ -12,7 +12,6 @@ in
   # Programming / daily-use extras on top of the common desktop.
   home.packages = with pkgs; [
     emacs
-    claude-code
     proton-vpn
   ];
 
