@@ -36,9 +36,8 @@ in
   home.packages = with pkgs; [
     kakoune
     waybar
-    #fastfetch
+    fastfetch
     btop
-    #neofetch
     wallust
     kitty
     rofi

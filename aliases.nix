@@ -49,6 +49,9 @@
       HISTFILE=~/.zsh_history
       SAVEHIST=10000
       source <(${pkgs.fzf}/bin/fzf --zsh)
+
+      # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
+      source ${./git-aliases.zsh}
     '';
   };
 }
