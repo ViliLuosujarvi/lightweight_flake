@@ -35,6 +35,20 @@
 
   programs.zsh.enable = true;
 
+  # --- Shared flake checkout ---
+  # This flake lives in /srv/nixos-config so both accounts (both in wheel) can
+  # edit and rebuild it. The setgid bit and default ACL keep every new file
+  # group-writable regardless of who creates it or their umask, and
+  # safe.directory stops git/nix refusing a repo owned by the other account.
+  systemd.tmpfiles.rules = [
+    "d /srv/nixos-config 2775 root wheel - -"
+    "A+ /srv/nixos-config - - - - group:wheel:rwX,default:group:wheel:rwX,mask::rwx,default:mask::rwx"
+  ];
+  programs.git = {
+    enable = true;
+    config.safe.directory = "/srv/nixos-config";
+  };
+
   # Hooks direnv into zsh and ships nix-direnv (fast, cached `use flake`).
   programs.direnv.enable = true;
 

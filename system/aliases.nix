@@ -5,6 +5,9 @@
 # just "user". Trimmed from to_be_incorporated/aliases: personal directory
 # jumps, pentesting (nmap), Discord/Steam and other host-specific bits
 # were left out.
+let
+  flake = "/srv/nixos-config";
+in
 {
   environment.systemPackages = with pkgs; [
     lsd # used by the ls aliases below
@@ -14,10 +17,10 @@
   environment.shellAliases = {
     # NixOS + home-manager. home-manager runs as a NixOS module, so there is no
     # separate `home-manager switch`: nrs applies the system and both accounts'
-    # homes from the pinned flake.lock; update bumps the inputs first. The path
-    # is absolute (not $HOME) so the pentest account can run them too.
-    nrs = "sudo nixos-rebuild switch --flake /home/user/nixos-config#nixos-vm --impure";
-    update = "nix flake update --flake /home/user/nixos-config && sudo nixos-rebuild switch --flake /home/user/nixos-config#nixos-vm --impure";
+    # homes from the pinned flake.lock; update bumps the inputs first. They use
+    # the shared checkout (see configuration.nix) so either account can run them.
+    nrs = "sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure";
+    update = "nix flake update --flake ${flake} && sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure";
     nfu = "nix flake update";
     ncg = "nix-collect-garbage --delete-older-than";
     ncgo = "nix-collect-garbage -d";
