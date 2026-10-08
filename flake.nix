@@ -14,16 +14,19 @@
       system = "x86_64-linux";
     in
     {
+      # Standalone home-manager: home-manager switch --flake .#user
+      homeConfigurations.user = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        modules = [ ./home.nix ];
+      };
+
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
           ./configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.user = import ./home.nix;
-          }
         ];
       };
     };

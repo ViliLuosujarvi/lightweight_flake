@@ -7,100 +7,25 @@
     "margin-right": 12,
     "spacing": 8,
     "modules-left": ["clock", "hyprland/workspaces"],
-    //"modules-center": ["clock", "custom/weather"],
-    //"modules-right": ["network", "group/system-info", "disk", "memory", "custom/nvidia", "group/cpu_info", "battery", "tray"],
-      "modules-right": ["network", "group/cpu_info", "memory" ,"disk", "group/system-info", "pulseaudio#microphone", "tray"],
+    "modules-right": ["network", "cpu", "memory", "disk", "pulseaudio", "tray"],
 
-
-
-	//cute cats can be found here:
-	//https://emojidb.org/cat-ascii-emojis
+    // Plain numbers; the focused workspace is styled in style.css
+    // (#workspaces button.active) so it stands out from the others.
     "hyprland/workspaces": {
-        "format": "{icon}",
+        "format": "{id}",
         "on-click": "activate",
         "all-outputs": true,
-        "sort-by-number": true,
-        "format-icons": {
-	"1": " 1 ",
-        "2": " 2 ",
-        "3": " 3 ",
-        "4": " 4 ",
-        "5": " 5 ",
-        "6": " 6 ",
-        "7": " 7 ",
-        "8": " 8 ",
-        "9": " 9 ",
-        "10": " 10 ",
-        "urgent": " Well Fuck \n  (⊙﹏⊙;) ",
-	"active": "  ",
-	"default": ""
-        }
-    },
-
-// ----------------------
-
-    // old order of cats :3
-//    "hyprland/workspaces": {
-//        "format": "{icon} {id}",
-//        "on-click": "activate",
-//        "all-outputs": true,
-//        "sort-by-number": true,
-//        "format-icons": {
-//	"1": "  /\\_/\\  \n ~(≧▽≦)~  \n   >づづ  ",
-//        "2": "  /\\_/\\  \n (• . •?)  \n  >づづ   ",
-//        "3": "  /\\_/\\  \n   (ฅ• . •ฅ) ♡  \n  > づづ ",
-//        "4": "  /\\_/\\  \n ( - ω - ) zzZ  \n  >  ⊃⊃ ",
-//        "5": "  /\\_/\\  \n  (O_O;)  \n  >づづ  ",
-//        "6": "  /\\_/\\  \n ( • ω • )  \n / づ ♡  ",
-//        "7": "  /\\_/\\  \n  (¬‿¬)  \n  >づづ  ",
-//        "8": "  /\\_/\\  \n (°w°)  \n  >づづ  ",
-//        "9": "  /\\_/\\  \n  (≖_≖)  \n  >づづ  ",
-//        "10": " /\\_/\\  \n (✿^‿^)  \n  >づづ ",
-//        "urgent": "  /\\_/\\  \n (⊙﹏⊙;)  \n  >づづ  ",
-//	"active": "  ∧,,,∧         ♡♡\n(  ̳• · • ̳)   you\n/    づ ♡ I love   ",
-//	"default": "  /\\_/\\  \n (°w°)  \n  >づづ"
-//        }
-//    },
-
-
-
-// -----------------------
-
-   //"hyprland/language": {
-   //  "format": "{short}",
-   //  "format-en": "🦅😎🇺🇸",
-   //  "format-fi": "🏂☃️☃️🇫🇮"
-   //},
-
-   "keyboard-state": {
-	"numlock": true,
-	//"numlock": "NUM LOCK! 🤯",
-	"capslock": false,
-	"format": "{name} {icon}",
-	"format-icons": {
-		//"locked": " ",
-		"locked": "",
-		//"unlocked": " "
-		"unlocked": ""
-	}
+        "sort-by-number": true
     },
 
     "disk": {
         "interval": 5,
-        "format": "󰋊 {percentage_used}%",
+        "format": "DISK {percentage_used}%",
         "path": "/",
         "tooltip": true,
         "unit": "GB",
-        "tooltip-format":  "Available {free} of {total}"
+        "tooltip-format": "Available {free} of {total}"
     },
-
-    //"custom/weather": {
-    //    "format": "{}°",
-    //    "tooltip": true,
-    //    "interval": 30,
-    //    "exec": "curl -s 'https://wttr.in/?format=%t'",
-    //    "exec-if": "ping wttr.in -c1"
-    //},
 
     "tray": {
         "icon-size": 16,
@@ -108,12 +33,11 @@
     },
 
     "clock": {
-	"interval": 1,
-       "format": "{:%H:%M:%OS         %d / %m    %U}",
+        "interval": 1,
+        "format": "{:%H:%M:%OS         %d / %m    %U}",
         "format-alt": "{:%Y-%m-%d}",
         "tooltip-format": "<big>{:%A, %B %d, %Y}</big>\n<small>{calendar}</small>",
-          /*"rotate": 180*/
-	"calendar": {
+        "calendar": {
             "mode": "month",
             "weeks-pos": "right",
             "on-scroll": 1,
@@ -122,7 +46,7 @@
                 "weeks": "<span color='#93a1a1'>{}</span>",
                 "weekdays": "<span color='#268bd2'>{}</span>",
                 "today": "<span color='#d33682'><b>{}</b></span>"
-            },
+            }
         },
         "actions": {
             "on-click-right": "mode",
@@ -134,156 +58,31 @@
     },
 
     "cpu": {
-        "format": "CPU:  󰘚 {usage}%",
+        "format": "CPU {usage}%",
         "tooltip": true,
         "interval": 1
     },
 
     "memory": {
-	// 󰍛
-        "format": " {percentage}%    {swapPercentage}%",
+        "format": "MEM {percentage}%  SWAP {swapPercentage}%",
         "tooltip-format": "{used:0.1f}GB / {total:0.1f}GB  {swapUsed}GB / {swapTotal}GB",
         "interval": 1
     },
 
-    "temperature": {
-	"thermal-zone": 2,
-	//"hwmon-path": "/sys/class/hwmon/hwmon0/temp1_input",
-	"interval": 10,
-        "critical-threshold": 90,
-        "format": "{icon} {temperatureC}°C",
-        "format-icons": ["󱃃", "󰔏", "󱃂"]
-    },
-
-    "group/cpu_info": {
-	"orientation": "horizontal",
-	"modules": [
-		"cpu",
-		"temperature"
-	]
-
-    },
-
-    "battery": {
-        "states": {
-            "good": 95,
-            "warning": 35,
-            "critical": 20
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": " 󰂄{capacity}%  ",
-        "format-plugged": "󰚥 {capacity}% ",
-        "format-alt": "{icon} {time}",
-        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-    },
-
     "network": {
-        //"format-wifi": "󰖩 {essid}",
-        //"format-ethernet": "󰈀 {ipaddr}",
-        //"tooltip-format": "{ifname}: {ipaddr}/{cidr}\n󰖩 {essid} ({signalStrength}%)",
-        //"format-linked": "󱘖 {ifname}",
-        //"format-disconnected": "󰯡 Offline",
-        //"format-alt": "{bandwidthUpBits} 󰁝 {bandwidthDownBits}"
-											// 󰖩 
-	"format-wifi" : " {bandwidthUpBytes:2}   {bandwidthDownBytes:2}    {signalStrength}%  ",
-        "format-ethernet": " {bandwidthUpBytes:2}   {bandwidthDownBytes:2}    󰈀 ",
-	"tooltip-format": "{ifname}:{ipaddr} / {cidr} | 󰖩 {essid} ({signalStrength}%)",
-        "format-linked": "󱘖 {ifname}:{ipaddr}    {bandwidthupbytes:2}   {bandwidthdownbytes:2}    {signalstrength}%",
-	"format-disconnected" : "󰯡  no network",
+        "format-wifi": "UP {bandwidthUpBytes:2}  DOWN {bandwidthDownBytes:2}  {signalStrength}%",
+        "format-ethernet": "UP {bandwidthUpBytes:2}  DOWN {bandwidthDownBytes:2}",
+        "format-linked": "{ifname}  UP {bandwidthUpBytes:2}  DOWN {bandwidthDownBytes:2}",
+        "format-disconnected": "no network",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr} | {essid} ({signalStrength}%)",
         "interval": 1,
-        "tooltip": true,
+        "tooltip": true
     },
 
     "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-muted": "󰝟 ",
-        "format-icons": {
-            "headphone": "󰋋",
-            "hands-free": "󰋎",
-            "headset": "󰋎",
-            "phone": "󰏲",
-            "portable": "󰏲",
-            "car": "󰄋",
-            "default": ["󰕿", "󰖀", "󰕾"]
-         },
-          "on-click": "pavucontrol",
-          "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-      },
-
-    "pulseaudio#microphone": {
-	"format": "{format_source}",
-	"format-source": "  ",
-	"format-source-muted": "  ",
-	//"on-click": "$HOME/.config/hypr/scripts/Volume.sh --toggle-mic",
-	//"on-click-right": "pavucontrol -t 4",
-	//"on-scroll-up": "$HOME/.config/hypr/scripts/Volume.sh --mic-inc",
-	//"on-scroll-down": "$HOME/.config/hypr/scripts/Volume.sh --mic-dec",
-	"tooltip-format": "{source_desc} | {source_volume}%",
-	"scroll-step": 5,
-    },
-
-
-    "backlight": {
-      "interval": 1,
-      "device": "intel_backlight",
-      "format": "{icon}{percent}%",
-      "format-icons": [
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//"",
-	//""
-
-	" ",
-	" ",
-	" ",
-	"󰃝 ",
-	"󰃞 ",
-	"󰃟 ",
-	"󰃠 "
-      ],
-      "on-scroll-down": "brightnessctl s 1%-",
-      "on-scroll-up": "brightnessctl s +1%",
-      "tooltip": true,
-      "tooltip-format": "Brightness: {percent}% ",
-      "smooth-scrolling-threshold": 1
-  },      
-
-
-    "group/system-info": {
-	"orientation": "horizontal",
-	"modules": [
-		"pulseaudio"
-		//"pulseaudio#microphone",
-		//"backlight"
-	]
-    },
-
-
-    //"custom/nvidia": {
-     //"exec": "nvidia-smi --query-gpu=pstate,utilization.gpu,temperature.gpu --format=csv,noheader,nounits | awk -F', ' '{printf \"GPU: \\uf0e7 %s  \\uf2db %s%%  \\uf2c9 %s°C\", $1, $2, $3}'",
-     //"interval": 5
-
-    "custom/nvidia": {
-     "exec": "nvidia-smi --query-gpu=pstate,utilization.memory,utilization.gpu,temperature.gpu --format=csv,noheader,nounits | awk -F', ' '{printf \"GPU:  \\uf0e7 %s    %s%%   \\uf2db %s%%  \\uf2c9 %s°C\", $1, $2, $3, $4}'",
-     "interval": 1
-
-
-	//"exec": "nvidia-smi --query-gpu=pstate,utilization.gpu,temperature.gpu --format=csv,noheader,nounits",
-	//"format":"GPU: {}",
-	//"return-type": "",
-	//"interval": 2
-	
+        "format": "VOL {volume}%",
+        "format-muted": "MUTED",
+        "on-click": "pavucontrol",
+        "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     }
-
 }

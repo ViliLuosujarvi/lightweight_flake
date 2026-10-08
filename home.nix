@@ -18,7 +18,7 @@ let
         if type == "directory" then
           lib.mapAttrs' (k: v: lib.nameValuePair "${name}/${k}" v) (configFilesOf path)
         else
-          { ${name} = { source = path; }; }
+          { ${name} = { source = lib.mkForce path; }; }
       )
       (builtins.readDir dir);
 in
@@ -44,7 +44,8 @@ in
     rofi
     emacs
     firefox
-    #claude-code
+    claude-code
+    networkmanagerapplet
 
     # foot, kitty and waybar configs all use "FiraCode Nerd Font Mono"
     nerd-fonts.fira-code
@@ -58,11 +59,8 @@ in
   };
 
   # --- Dotfiles ---
-  # Everything under ./.config is the real, untrimmed desktop config from
-  # https://github.com/ViliLuosujarvi/.dotfiles (hosts/Laptop), symlinked
-  # in as-is. Some of it (NVIDIA env vars, multi-monitor rules, keybinds for
-  # apps like Steam/Discord/dolphin that aren't installed here) won't do
-  # anything useful on a lightweight VM, but it's kept verbatim rather than
-  # re-trimmed.
+  # Everything under ./.config is symlinked in as-is. Derived from the laptop
+  # dotfiles (github.com/ViliLuosujarvi/.dotfiles) but trimmed for the VM:
+  # no blur/shadows/animations, no NVIDIA/multi-monitor/Steam/Discord bits.
   xdg.configFile = configFilesOf ./.config;
 }
