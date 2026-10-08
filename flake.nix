@@ -1,5 +1,5 @@
 {
-  description = "Lightweight NixOS VM: Hyprland + foot + kakoune";
+  description = "NixOS VM config: Hyprland + foot + kakoune, with separate dev and pentest accounts";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -12,22 +12,32 @@
   outputs = { self, nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
+
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      # Standalone home-manager, one config per account:
+      #   home-manager switch --flake .#user
+      #   home-manager switch --flake .#pentest
+      mkHome = name: home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./users/${name}/home.nix ];
+      };
     in
     {
-      # Standalone home-manager: home-manager switch --flake .#user
-      homeConfigurations.user = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-        modules = [ ./home.nix ];
+      homeConfigurations = {
+        user = mkHome "user";
+        pentest = mkHome "pentest";
       };
 
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
-          ./configuration.nix
-          ./aliases.nix
+          ./system/configuration.nix
+          ./system/aliases.nix
+          ./system/pentest.nix
         ];
       };
     };

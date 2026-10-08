@@ -1,16 +1,19 @@
-# Prompt and interactive helpers. Sourced from aliases.nix.
+# Prompt and interactive helpers. Sourced from aliases.nix (programs.zsh.promptInit,
+# which NixOS runs last in /etc/zshrc - anything set earlier would be
+# overwritten by the default `prompt suse`).
 #
-#   ~/lightweight_flake  main ●2 ?1 ⇡1
-#   ❯            <- green: ok, red: failed, yellow: command not found
+# Plain ASCII, zsh built-ins and git only; no icon font needed.
 #
-# Needs a Nerd Font for the icons (FiraCode Nerd Font is already installed).
+#   user @ host (branch * +1 ~2 ?3 ahead 1) venv /full/path
+#   current-folder $                                  1  14:32
 
-setopt PROMPT_SUBST
+setopt PROMPT_SUBST PROMPT_SP
 autoload -Uz add-zsh-hook
 
 # --- Git info ---------------------------------------------------------------
 # One `git status` call per prompt: branch, ahead/behind, staged, modified,
-# untracked.
+# untracked. Printed as "(branch * +1 ~2 ?3 ahead 1 behind 1) " in yellow,
+# nothing outside a repository.
 function _prompt_git() {
   command git rev-parse --is-inside-work-tree &>/dev/null || return
 
@@ -33,40 +36,38 @@ function _prompt_git() {
 
   [[ $branch == '(detached)' ]] && branch=$(command git rev-parse --short HEAD 2>/dev/null)
 
-  local out="%F{magenta} ${branch}%f"
-  (( staged ))    && out+=" %F{green}●${staged}%f"
-  (( modified ))  && out+=" %F{yellow}✚${modified}%f"
-  (( untracked )) && out+=" %F{blue}?${untracked}%f"
-  (( ahead ))     && out+=" %F{cyan}⇡${ahead}%f"
-  (( behind ))    && out+=" %F{cyan}⇣${behind}%f"
-  print -rn -- "$out"
+  local out="%F{yellow}(${branch}"
+  (( staged + modified + untracked )) && out+=" %F{red}*%F{yellow}"
+  (( staged ))    && out+=" %F{green}+${staged}%F{yellow}"
+  (( modified ))  && out+=" %F{yellow}~${modified}"
+  (( untracked )) && out+=" %F{blue}?${untracked}%F{yellow}"
+  (( ahead ))     && out+=" %F{cyan}ahead ${ahead}%F{yellow}"
+  (( behind ))    && out+=" %F{cyan}behind ${behind}%F{yellow}"
+  print -rn -- "$out)%f "
 }
 
-# --- Prompt colour: found / failed / not found ------------------------------
-# 127 is what the shell returns when the command doesn't exist.
-typeset -g _prompt_status=0
+# --- Per-prompt state -------------------------------------------------------
+typeset -g _prompt_git_info=""
 function _prompt_precmd() {
-  _prompt_status=$?
   _prompt_git_info=$(_prompt_git)
 }
-# Registered first so $? is still the user's command when it runs.
-add-zsh-hook -d precmd _prompt_precmd 2>/dev/null
-precmd_functions=(_prompt_precmd ${precmd_functions:#_prompt_precmd})
+add-zsh-hook precmd _prompt_precmd
 
-function _prompt_char() {
-  case $_prompt_status in
-    0)   print -rn -- '%F{green}❯%f' ;;
-    127) print -rn -- '%F{yellow}❯%f' ;;
-    *)   print -rn -- '%F{red}❯%f' ;;
-  esac
+# Python virtualenv name, if one is active.
+function _prompt_venv() {
+  [[ -n $VIRTUAL_ENV ]] && print -rn -- "%F{cyan}(${VIRTUAL_ENV:t})%f "
 }
 
-# user@host only over ssh or as root; path is the last 3 components.
-typeset -g _prompt_who=""
-[[ -n $SSH_CONNECTION ]] && _prompt_who='%F{yellow}%n@%m%f '
-PROMPT='%(!.%F{red}%n%f .)${_prompt_who}%B%F{blue}%3~%f%b${_prompt_git_info}'$'\n''$(_prompt_char) '
-# Exit code of the last command, on the right, only on failure.
-RPROMPT='%(?..%F{red}✘ %?%f)'
+# --- Prompt -----------------------------------------------------------------
+# Same layout as to_be_incorporated/zsh: a blank line, then
+# user @ host (git) (venv) full path, then current folder and the prompt char.
+PROMPT=$'\n'
+PROMPT+='%F{magenta}%n%f @ %F{magenta}%m%f ${_prompt_git_info}$(_prompt_venv)%F{green}%~%f'$'\n'
+PROMPT+='%F{yellow}%1~%f %F{magenta}%(!.#.$)%f '
+PROMPT2='%F{8}\ %f'
+
+# Exit code (only if non-zero) and a clock, on the right.
+RPROMPT='%(?..%F{red}%?%f )%F{blue}%D{%H:%M}%f'
 
 # --- Recommendations --------------------------------------------------------
 
@@ -79,7 +80,7 @@ function _alias_reminder() {
   for name expansion in ${(kv)aliases}; do
     (( ${#expansion} < 4 )) && continue
     if [[ $typed == $expansion || $typed == "$expansion "* ]]; then
-      print -P "%F{8}󰌵 alias available: %F{cyan}${name}%F{8} = ${expansion}%f"
+      print -P "%F{8}tip: alias available: %F{cyan}${name}%F{8} = ${expansion}%f"
       return
     fi
   done

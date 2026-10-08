@@ -1,0 +1,48 @@
+# -*- conf -*-
+
+#shell=/run/current-system/sw/bin/zsh
+
+font=Fira Code:size=10
+
+[scrollback]
+lines=100000
+
+[key-bindings]
+clipboard-copy=Control+c XF86Copy
+clipboard-paste=Control+v XF86Paste
+
+[search-bindings]
+cancel=Control+g Control+Shift+c Escape
+
+[url-bindings]
+cancel=Control+g Control+Shift+c Control+d Escape
+
+[colors]
+cursor=ffffff 0a0a20
+
+background=0a0a20
+foreground=ffffff
+
+regular0=d32f2f
+regular1=ff4081
+regular2=4caf50
+regular3=ffeb3b
+regular4=2196f3
+regular5=9c27b0
+regular6=00bcd4
+regular7=607d8b
+
+bright0=ff5722
+bright1=ff9800
+bright2=00e676
+bright3=cddc39
+bright4=009688
+bright5=673ab7
+bright6=3f51b5
+bright7=ffffff
+
+selection-foreground=000000
+selection-background=80deea
+
+[tweak]
+font-monospace-warn=no

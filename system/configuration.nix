@@ -62,7 +62,7 @@
   };
 
   # --- CLI / packages ---
-  # foot, kakoune and waybar are user-level, managed via home-manager (home.nix)
+  # foot, kakoune and waybar are user-level, managed via home-manager (users/<name>/home.nix)
   # alongside their dotfiles, so they're not duplicated here.
   environment.systemPackages = with pkgs; [
     git

@@ -1,0 +1,246 @@
+/*don't forget to adde this to .zshrc:*/
+/*fastfetch -c ~/.dotfiles/hosts/Home-Desktop/.config/fastfetch/mystical-config.jsonc --color-separator 31*/
+
+{
+"$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+"logo": {
+    /*"source": "/home/nansus/.config/fastfetch/Mad_Hatter.txt",*/
+    /*"source": "/home/nansus/.config/fastfetch/chesire_cat_with_text_4",*/
+    "source": "/home/nansus/.config/fastfetch/testing_no_room_v2",
+
+  "color": {
+     /*"1": "green"*/
+     "1": "magenta"
+  },
+  "padding": {
+     "top": 1
+  }
+},
+"display": {
+	
+    "bar": {
+      "charElapsed": "/",
+      "charTotal": "/",
+      "width": 6
+    },
+
+    "percent": {
+      "type": 9,
+      "color": {
+        "green": "green",
+        "yellow": "green",
+	"red": "red"
+      },
+      "ndigits": 2
+    },		/* 󰑃 */
+   "separator": "~> "
+},
+"modules": [
+    "break",
+    {
+    "type": "os",
+    "key": " DISTRO ",
+    "keyColor": "31"
+    },
+    {
+    "type": "bios",
+    "key": "│ ╠ ",
+    "keyColor": "31",
+    "format": "{5} {1}"
+    },
+    {
+    "type": "kernel",
+    "key": "│ ╠ ",
+    "keyColor": "31"
+    },
+    {
+    "type": "shell",
+    "key": "│ ╠ ",
+    "keyColor": "31"
+    },
+    {
+    "type": "packages",
+    "key": "│ ╠ ",
+    "keyColor": "31"
+    },
+    {
+    "type": "Processes",
+    "key": "│ ╠ ",
+    "keyColor": "31",
+    "format": "{1} Active processes"
+    },
+    {
+    "type": "wm",
+    "key": " DE/WM ",
+    "keyColor": "light_yellow"
+    },
+    {
+    "type": "wmtheme",
+    "key": "│ ╠ ",
+    "keyColor": "light_yellow"
+    },
+    {
+    "type": "icons",
+    "key": "│ ╠ ",
+    "keyColor": "light_yellow"
+    },
+    {
+        "type": "cursor",
+        "key": "│ ╠ ",
+        "keyColor": "light_yellow",
+    },
+    {
+        "type": "terminalfont",
+        "key": "│ ╠ ",
+        "keyColor": "light_yellow",
+    },
+    {
+    "type": "terminal",
+    "key": "│ ╠ ",
+    "keyColor": "light_yello"
+    },
+    {
+    "type": "Board",
+    "key": "󰌢 SYSTEM ",
+    "keyColor": "blue",
+    "format": "{1} {2}"
+    },
+    {
+    "type": "cpu",
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    "format": "{1}:"
+    },
+    {
+    "type": "cpu",
+    "showCoreCount": true,
+    "temp": true,
+    "key": "│ ╠    ╚ ",
+    "keyColor": "blue",
+    "format": "{3} Cores | {4} Logical Cores | {8}"
+    },
+    {
+    "type": "cpu",
+    "showCoreCount": true,
+    "temp": true,
+    "key": "│ ╠    ╚ ",
+    "keyColor": "blue",
+    "format": "Max: {7} | Base: {6}"
+    },
+    {
+    "type": "CPUUsage",
+    "percent": {
+	"type": 9,
+	"green": 83,
+	"yellow": 89,
+	"red": 94
+    },
+    "key": "│ ╠    ╚ ",
+    "keyColor": "blue",
+    "format": "Max: {2} | Avg: {1}"
+    },
+    {
+    "type": "gpu",
+    "key": "│ ╠ ",
+    "format": "{1} {2}:",
+    "keyColor": "blue"
+    },
+    {
+    "type": "gpu",
+    "key": "│ ╠    ╚ ",
+    "format": "{3}",
+    "keyColor": "blue"
+    },
+    {
+    "type": "display",
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    /*"compactType": "original-with-refresh-rate"*/
+    "format": "{1} x {2} @ {3}Hz | {6}"
+    },
+    {
+    "type": "memory",
+    "percent": {
+	"type": 3,
+	"green": 50,
+	"yellow": 80,
+	"red": 93
+    },
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    "format": "{1}/{2}  {4}   "
+    },
+    {
+    "type": "swap",
+    "percent": {
+	"type": 3,
+	"green": 50,
+	"yellow": 80,
+	"red": 93
+    },
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    "format": "{1}/{2}       {4}   "
+    },
+    {
+    "type": "uptime",
+    "key": "│ ╠ ",
+    "keyColor": "blue"
+    },
+    {
+    "type": "TPM",
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    "format": "{2}"
+    },
+    {
+    "type": "host",
+    "key": "│ ╠ ",
+    "keyColor": "blue",
+    "fallback": "Cool build bro! 😎",
+    "format": "{1}{2}"
+    },
+    {
+    "type": "sound",
+    "key": " AUDIO ",
+    "format": "{2:22} {5}",
+    "keyColor": "light_green",
+    "percent": {
+	"type": 3,
+	"green": "100",
+    }
+    },
+    {
+    "type": "player",
+    "key": "│ ╠ ",
+    "keyColor": "light_green"
+    },
+    {
+    "type": "media",
+    "key": "│ ╠ ",
+    "keyColor": "light_green"
+    },
+    {
+    "type": "weather",
+    "key": " ",
+    /*is a lil' snowman :holding back tears:*/   
+    "format": "  {1}",
+    "timeout": 2000
+    },
+    "break",
+    {
+    "type": "custom",
+    /*"format": "\u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[38m  \u001b[39m  \u001b[39m    \u001b[38m  \u001b[37m  \u001b[36m  \u001b[35m  \u001b[34m  \u001b[33m  \u001b[32m  \u001b[31m  \u001b[90m "*/
+
+    /*Great pastel coloring :smile:*/
+    /*"format": "\u001b[38;5;153m  \u001b[38;5;159m  \u001b[38;5;151m  \u001b[38;5;218m  \u001b[38;5;182m  \u001b[38;5;159m  \u001b[38;5;151m  \u001b[38;5;218m  \u001b[38;5;182m  \u001b[38;5;153m  \u001b[38;5;159m  \u001b[38;5;151m  \u001b[38;5;218m  \u001b[38;5;182m  \u001b[38;5;159m  \u001b[38;5;151m  \u001b[38;5;218m  \u001b[38;5;182m  \u001b[38;5;153m  \u001b[38;5;159m  \u001b[38;5;151m  \u001b[0m"*/
+    
+    /*Slightly stronger pastel*/
+    /*"format": "\u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;212m  \u001b[38;5;207m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;212m  \u001b[38;5;207m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;212m  \u001b[38;5;207m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;212m  \u001b[38;5;207m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;212m  \u001b[38;5;207m  \u001b[0m"*/
+    
+    /*Best color so far and here one  */
+    "format": "\u001b[38;5;99m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;164m  \u001b[38;5;213m  \u001b[38;5;219m  \u001b[38;5;159m  \u001b[38;5;123m  \u001b[38;5;99m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[38;5;164m  \u001b[38;5;213m  \u001b[38;5;219m  \u001b[38;5;159m  \u001b[38;5;123m  \u001b[38;5;99m  \u001b[38;5;117m  \u001b[38;5;120m  \u001b[0m"
+    },
+    "break",
+    ]
+}

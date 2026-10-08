@@ -12,13 +12,14 @@
   ];
 
   environment.shellAliases = {
-    # NixOS / home-manager. The flake lives in the current directory, so run
-    # these from the flake folder. --impure is needed because
-    # configuration.nix imports /etc/nixos/hardware-configuration.nix.
-    hms = "home-manager switch --flake .#user";
-    nrs = "sudo nixos-rebuild switch --flake .#nixos-vm --impure";
-    update = "home-manager switch --flake .#user";
-    upgrade = "sudo nixos-rebuild switch --flake .#nixos-vm --impure";
+    # NixOS / home-manager. The flake is expected at ~/nixos-config, so these
+    # work from any directory, and hms/update build the config of whichever
+    # account runs them ($USER = "user" or "pentest"). --impure is needed
+    # because configuration.nix imports /etc/nixos/hardware-configuration.nix.
+    hms = "home-manager switch --flake $HOME/nixos-config#$USER";
+    nrs = "sudo nixos-rebuild switch --flake $HOME/nixos-config#nixos-vm --impure";
+    update = "home-manager switch --flake $HOME/nixos-config#$USER";
+    upgrade = "sudo nixos-rebuild switch --flake $HOME/nixos-config#nixos-vm --impure";
     nfu = "nix flake update";
     ncg = "nix-collect-garbage --delete-older-than";
     ncgo = "nix-collect-garbage -d";
@@ -31,6 +32,14 @@
     la = "lsd -a";
     lla = "lsd -la";
     lt = "lsd --tree";
+
+    # Go up directories with just dots: ".." is one level, "......" is six
+    ".." = "cd ..";
+    "..." = "cd ../..";
+    "...." = "cd ../../..";
+    "....." = "cd ../../../..";
+    "......" = "cd ../../../../..";
+    "......." = "cd ../../../../../..";
 
     # PipeWire
     pws = "wpctl status";
@@ -52,8 +61,12 @@
 
       # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
       source ${./git-aliases.zsh}
+    '';
 
-      # Git/folder prompt, alias reminders, command-not-found hints
+    # NixOS runs promptInit after interactiveShellInit, and its default is
+    # `prompt suse`, which would overwrite our PROMPT. So the prompt, alias
+    # reminders and command-not-found hints are loaded here instead.
+    promptInit = ''
       source ${./prompt.zsh}
     '';
 
