@@ -34,6 +34,10 @@ in
 
     c = "cd /srv/nixos-vm-config/";
 
+
+    # Programs
+    cad = "freecad";
+
     # Icons for files/folders in the terminal
     ls = "lsd";
     l = "lsd -l"; # long
@@ -109,10 +113,17 @@ in
       bindkey '^[OA' history-substring-search-up
       bindkey '^[[B' history-substring-search-down
       bindkey '^[OB' history-substring-search-down
+
+      # Autosuggestions: folders first for `cd` (cd_dirs, in completion.zsh),
+      # then history, then what Tab would complete. Set here because the
+      # autosuggestions module resets it after completion.zsh is sourced, and
+      # its strategy option only accepts the built-in names.
+      ZSH_AUTOSUGGEST_STRATEGY=(cd_dirs history completion)
     '';
 
     # Commands turn red as you type if they don't exist, green if they do;
-    # greyed-out history suggestions (right arrow to accept).
+    # greyed-out suggestions (right arrow to accept): folders for `cd`,
+    # otherwise history (see promptInit).
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
   };

@@ -29,3 +29,27 @@ zstyle ':completion:*:warnings' format '%F{red}-- no matches --%f'
 # (Right arrow / End still accept all of it).
 bindkey '^[[1;5C' forward-word
 bindkey '^[f' forward-word
+
+# For `cd`, suggest a matching folder in the current directory before history
+# (enabled via ZSH_AUTOSUGGEST_STRATEGY in aliases.nix). Exact case wins, else
+# case-insensitive. The suggestion can only append to what's typed, so
+# `cd ge` shows `cd ge|neral/`; _cd_fix_case turns that into `cd General/`
+# on Enter, if that path doesn't exist and exactly one folder matches.
+_zsh_autosuggest_strategy_cd_dirs() {
+  emulate -L zsh -o extendedglob
+  [[ $1 == cd\ * ]] || return
+  local word=${1#cd }
+  local -a dirs=( ${(b)word}*(N/) )
+  (( $#dirs )) || dirs=( (#i)${(b)word}*(N/) )
+  (( $#dirs )) && typeset -g suggestion="$1${dirs[1]:$#word}/"
+}
+_cd_fix_case() {
+  emulate -L zsh -o extendedglob
+  [[ $BUFFER == cd\ * ]] || return
+  local word=${BUFFER#cd }
+  [[ -z $word || -d $word ]] && return
+  local -a m=( (#i)${(b)word%/}(N/) )
+  (( $#m == 1 )) && BUFFER="cd $m[1]/"
+}
+autoload -Uz add-zle-hook-widget
+add-zle-hook-widget zle-line-finish _cd_fix_case
