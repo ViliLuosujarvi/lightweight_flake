@@ -1,0 +1,8 @@
+# Previous green (pentest-style) color scheme, saved before switching to red.
+# To revert, replace the matching lines in ./config with these.
+# (old_colors holds the original grey/white scheme.)
+output * bg #000000 solid_color
+# class                 border  backgr. text    indicator child_border
+client.focused          #00ff41 #00ff41 #000000 #00ff41   #00ff41
+client.focused_inactive #0a3d14 #0a3d14 #00ff41 #0a3d14   #0a3d14
+client.unfocused        #0a3d14 #0a3d14 #00ff41 #0a3d14   #0a3d14

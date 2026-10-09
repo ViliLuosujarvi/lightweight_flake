@@ -13,14 +13,14 @@ set $menu rofi -show drun -show-icons
 set $mod Ctrl+Mod1
 
 # -------- Look ------------------------------
-output * bg #111111 solid_color
+output * bg #000000 solid_color
 default_border pixel 2
 default_floating_border pixel 2
 gaps inner 4
 # class                 border  backgr. text    indicator child_border
-client.focused          #ffffff #ffffff #000000 #ffffff   #ffffff
-client.focused_inactive #444444 #444444 #ffffff #444444   #444444
-client.unfocused        #444444 #444444 #ffffff #444444   #444444
+client.focused          #ff2b2b #ff2b2b #000000 #ff2b2b   #ff2b2b
+client.focused_inactive #3d0a0a #3d0a0a #ff2b2b #3d0a0a   #3d0a0a
+client.unfocused        #3d0a0a #3d0a0a #ff2b2b #3d0a0a   #3d0a0a
 
 # -------- Input -----------------------------
 input type:keyboard {
@@ -62,7 +62,12 @@ bindsym $mod+Shift+k resize shrink height 70px
 
 bindsym $mod+Shift+F1 layout tabbed
 bindsym $mod+Shift+F2 layout default
-# change the split orientation
+# Ctrl+Alt+s before opening a window: the new window is paired with the
+# focused one instead of joining the row (switches between side by side and
+# stacked; press it again to switch back).
+bindsym $mod+s split toggle
+# Alt+Tab: flip the split of the focused window's container. When it holds
+# just the pair, this works like Hyprland's togglesplit.
 bindsym Mod1+Tab layout toggle split
 
 # -------- General applications --------------

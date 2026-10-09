@@ -12,26 +12,27 @@ in
   # Programming / daily-use extras on top of the common desktop.
   home.packages = with pkgs; [
     proton-vpn
+    freecad
   ];
 
   # Emacs with every package .config/emacs/init.el `require`s; plain emacs
   # has none of them and init.el stops at the first missing one.
-  programs.emacs = {
-    enable = true;
-    extraPackages = epkgs: with epkgs; [
-      vertico
-      orderless
-      corfu
-      evil
-      projectile
-      treemacs
-      doom-modeline
-      dashboard
-      nerd-icons
-      nerd-icons-dired
-      nerd-icons-completion
-    ];
-  };
+  #programs.emacs = {
+  #  enable = true;
+  #  extraPackages = epkgs: with epkgs; [
+  #    vertico
+  #    orderless
+  #    corfu
+  #    evil
+  #    projectile
+  #    treemacs
+  #    doom-modeline
+  #    dashboard
+  #    nerd-icons
+  #    nerd-icons-dired
+  #    nerd-icons-completion
+  #  ];
+  #};
 
   home.file.".zshrc".text = ''
     alias vpn=protonvpn-app

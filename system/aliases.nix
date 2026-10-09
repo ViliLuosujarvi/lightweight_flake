@@ -32,6 +32,8 @@ in
     nd = "nix develop";
     ns = "nix-shell";
 
+    c = "cd /srv/nixos-vm-config/";
+
     # Icons for files/folders in the terminal
     ls = "lsd";
     l = "lsd -l"; # long
@@ -67,6 +69,10 @@ in
       # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
       source ${./git-aliases.zsh}
 
+      # Tab completion (case-insensitive, menu, colors, typo fixes) and
+      # word-by-word accepting of autosuggestions.
+      source ${./completion.zsh}
+
       # Nix clean-up: delete old generations, then garbage-collect the store.
       # Plain nix-collect-garbage only reaches your own profiles, so accounts
       # in wheel also clean the system's (sudo), which removes old boot
@@ -94,6 +100,15 @@ in
     # reminders and command-not-found hints are loaded here instead.
     promptInit = ''
       source ${./prompt.zsh}
+
+      # Type part of a command, then Up/Down cycles only through history
+      # lines containing it (case-insensitive). Loaded here because it has
+      # to come after zsh-syntax-highlighting.
+      source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+      bindkey '^[[A' history-substring-search-up
+      bindkey '^[OA' history-substring-search-up
+      bindkey '^[[B' history-substring-search-down
+      bindkey '^[OB' history-substring-search-down
     '';
 
     # Commands turn red as you type if they don't exist, green if they do;

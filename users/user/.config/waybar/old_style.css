@@ -1,21 +1,23 @@
-/* Red palette: black background, reds only */
-@define-color color0 #000000; /* Background */
-@define-color color1 #ff2b2b; /* Main red */
-@define-color color2 #ff2b2b; /* Main red */
-@define-color color3 #ff3b14; /* Neon red */
-@define-color color4 #cc0000;
-@define-color color5 #b11a1a;
-@define-color color6 #ff4d4d;
-@define-color color7 #ffc8c8; /* Light text */
-@define-color color8 #1a0303; /* Darker background */
-@define-color color9 #ff7d7d;
-@define-color color10 #3d0a0a; /* Dim red */
-@define-color color11 #5a0f0f;
-@define-color color12 #8f1111;
-@define-color color13 #a81a1a;
-@define-color color14 #ff6666;
-@define-color color15 #ffe0e0; /* Lightest text */
-@define-color color16 #ff2b2b; /* Accent */
+/* Define Solarized Dark colors */
+@define-color color0 #002b36; /* Base03 (Dark background color)  */
+@define-color color1 #dc322f; /* Red */
+/*@define-color color2 #859900;  Green */
+@define-color color2 #00e676;  /*#39ff14 Neon Green */
+/*@define-color color3 #b58900;  Yellow */
+@define-color color3 #ffea00;  /*#ffd300  Neon Yellow */
+@define-color color4 #3da5ff;  /*#268bd2  Blue */
+@define-color color5 #7c7cff;  /*#d33682  Magenta */
+@define-color color6 #00d4c7;  /*#2aa198 Cyan */
+@define-color color7 #eee8d5; /* Light background (Base2) */
+@define-color color8 #073642; /* Darker background (Base02) */
+@define-color color9 #ff6d00;  /*#cb4b16  Orange */
+@define-color color10 #586e75; /* Base01 (Soft dark gray) */
+@define-color color11 #657b83; /* Base00 (Neutral gray */
+@define-color color12 #839496; /* Base0 (Light gray */
+@define-color color13 #6c71c4; /* Violet */
+@define-color color14 #93a1a1; /* Base1 (Slightly lighter gray)*/
+@define-color color15 #fdf6e3; /* Base3 (Lightest background color) */
+@define-color color16 #FB008F;  /* Vibrant Magenta */
 
 
 /* Nord theme colors (commented out) */
@@ -464,8 +466,8 @@ window#waybar {
 
 #cpu,
 #temperature {
-    border-bottom-color: @color4; /* USed to be @color4*/
-    color: @color4;
+    border-bottom-color: @color13; /* USed to be @color4*/
+    color: @color13
 }
 
 #custom-nvidia {
@@ -542,8 +544,8 @@ window#waybar {
 
 #pulseaudio,
 #backlight {
-    border-bottom-color: @color4;    
-    color: @color4;
+    border-bottom-color: @color2;    
+    color: @color2;
 }
 
 #pulseaudio.muted {
@@ -581,8 +583,8 @@ window#waybar {
 }
 
 #disk {
-    border-bottom-color: @color4;  /*used to be @color13 */
-    color: @color4;
+    border-bottom-color: @color6;  /*used to be @color13 */
+    color: @color6;
 }
 
 #system-info {
