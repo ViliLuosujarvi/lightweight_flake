@@ -6,7 +6,7 @@
 # jumps, pentesting (nmap), Discord/Steam and other host-specific bits
 # were left out.
 let
-  flake = "/srv/nixos-config";
+  flake = "/srv/nixos-vm-config";
 in
 {
   environment.systemPackages = with pkgs; [

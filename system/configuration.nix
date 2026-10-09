@@ -36,34 +36,33 @@
   programs.zsh.enable = true;
 
   # --- Shared flake checkout ---
-  # This flake lives in /srv/nixos-config, owned by "user", who commits and
+  # This flake lives in /srv/nixos-vm-config, owned by "user", who commits and
   # runs `nrs`. pentest gets write access to users/pentest only (ACL, incl.
   # default entries so files either account creates stay writable by both),
   # which is enough to edit its own home and `hms` it, but not the system
   # config root builds. safe.directory lets pentest run git in the checkout.
   #
-  # Migrating from the old shared-wheel layout, run once as "user" before nrs:
-  #   sudo setfacl -R -b /srv/nixos-config
-  #   sudo chown -R user:users /srv/nixos-config
-  #   sudo chmod -R g-ws /srv/nixos-config
+  # An existing checkout at the old path /srv/nixos-config: move it once with
+  #   sudo mv /srv/nixos-config /srv/nixos-vm-config
+  # and rebuild with the full path (nrs still points at the old one until then).
   systemd.tmpfiles.rules = [
-    "d /srv/nixos-config 0755 user users - -"
-    "A+ /srv/nixos-config/users/pentest - - - - user:pentest:rwX,default:user:pentest:rwX,default:user:user:rwX,mask::rwx,default:mask::rwx"
+    "d /srv/nixos-vm-config 0755 user users - -"
+    "A+ /srv/nixos-vm-config/users/pentest - - - - user:pentest:rwX,default:user:pentest:rwX,default:user:user:rwX,mask::rwx,default:mask::rwx"
   ];
   programs.git = {
     enable = true;
-    config.safe.directory = "/srv/nixos-config";
+    config.safe.directory = "/srv/nixos-vm-config";
   };
 
-  # Fills /srv/nixos-config on first boot (or first rebuild), so a fresh
+  # Fills /srv/nixos-vm-config on first boot (or first rebuild), so a fresh
   # install needs no manual clone. Skipped once the repo is there, so it
   # never touches an existing checkout.
-  systemd.services.nixos-config-checkout = {
-    description = "Clone the NixOS config into /srv/nixos-config";
+  systemd.services.nixos-vm-config-checkout = {
+    description = "Clone the NixOS config into /srv/nixos-vm-config";
     wantedBy = [ "multi-user.target" ];
     wants = [ "network-online.target" ];
     after = [ "network-online.target" "systemd-tmpfiles-setup.service" ];
-    unitConfig.ConditionPathExists = "!/srv/nixos-config/.git";
+    unitConfig.ConditionPathExists = "!/srv/nixos-vm-config/.git";
     path = [ pkgs.git ];
     serviceConfig = {
       Type = "oneshot";
@@ -71,10 +70,10 @@
       Group = "users";
       # Afterwards, as root: apply pentest's write access to users/pentest,
       # which only works on files that already exist.
-      ExecStartPost = "+${pkgs.systemd}/bin/systemd-tmpfiles --create --prefix=/srv/nixos-config";
+      ExecStartPost = "+${pkgs.systemd}/bin/systemd-tmpfiles --create --prefix=/srv/nixos-vm-config";
     };
     script = ''
-      git clone https://github.com/ViliLuosujarvi/nixos-vm-config /srv/nixos-config
+      git clone https://github.com/ViliLuosujarvi/nixos-vm-config /srv/nixos-vm-config
     '';
   };
 

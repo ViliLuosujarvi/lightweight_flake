@@ -20,8 +20,8 @@ NixOS for a QEMU VM: sway + foot + kakoune, with two accounts:
 
 ## Fresh install
 
-Either way, the system clones this repo into `/srv/nixos-config` by itself on
-first boot (`nixos-config-checkout` service), so there's no manual clone.
+Either way, the system clones this repo into `/srv/nixos-vm-config` by itself on
+first boot (`nixos-vm-config-checkout` service), so there's no manual clone.
 
 **Option A: straight from the installer ISO with `nixos-install`.** Partition
 for UEFI (an EFI partition and a root partition), mount them under `/mnt`,
@@ -58,9 +58,9 @@ would leave you with nothing to type into:
 3. Back on the login screen (Ctrl+Alt+F1), log in normally; sway is the
    only session.
 
-If `hms` says `/srv/nixos-config` has no flake, the first-boot clone hadn't
+If `hms` says `/srv/nixos-vm-config` has no flake, the first-boot clone hadn't
 finished (it needs the network): wait a moment, or run
-`sudo systemctl start nixos-config-checkout`.
+`sudo systemctl start nixos-vm-config-checkout`.
 
 ## Day to day
 
