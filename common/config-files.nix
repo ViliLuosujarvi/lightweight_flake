@@ -2,9 +2,9 @@
 
 # Recursively walk a directory and turn every regular file it contains
 # into an xdg.configFile entry, keyed by its path relative to that
-# directory - so ./.config/hypr/UserConfigs/Keybinds.conf becomes the
-# xdg.configFile key "hypr/UserConfigs/Keybinds.conf", symlinked from the
-# nix store at ~/.config/hypr/UserConfigs/Keybinds.conf.
+# directory - so ./.config/waybar/style.css becomes the xdg.configFile key
+# "waybar/style.css", symlinked from the nix store at
+# ~/.config/waybar/style.css.
 #
 # Each file gets its own symlink (rather than symlinking whole directories
 # wholesale) so that apps which write runtime state next to their config

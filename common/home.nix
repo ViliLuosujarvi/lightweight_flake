@@ -18,7 +18,6 @@
     waybar
     fastfetch
     btop
-    wallust
     kitty
     rofi
     firefox

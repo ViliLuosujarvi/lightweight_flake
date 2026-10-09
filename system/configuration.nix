@@ -61,8 +61,7 @@
   # --- Login manager (ly) ---
   # TUI display manager with built-in background animations (none / doom /
   # matrix). `animation` sets the default; the key shown at the login screen
-  # switches it. Sessions come from the Wayland session files that
-  # programs.sway and programs.hyprland ship.
+  # switches it. The sway session comes from programs.sway below.
   services.displayManager.ly = {
     enable = true;
     settings = {
@@ -70,12 +69,11 @@
     };
   };
 
-  # --- Window managers ---
-  # Sway is the one to use here: the VM has no 3D acceleration, and sway can
-  # draw with pixman, a plain 2D CPU renderer. Hyprland can only draw through
-  # OpenGL, which without a GPU Mesa emulates on the CPU (llvmpipe), so every
-  # redraw costs far more. Hyprland stays installed as a second session; pick
-  # either in ly's session field (it remembers the last one).
+  # --- Sway ---
+  # The VM has no 3D acceleration, so everything is drawn on the CPU. Sway
+  # can draw with pixman, a plain 2D renderer; compositors that only draw
+  # through OpenGL (Hyprland, which this config used before) get it emulated
+  # on the CPU by Mesa (llvmpipe), which costs far more per redraw.
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
@@ -91,7 +89,6 @@
       export _JAVA_AWT_WM_NONREPARENTING=1
     '';
   };
-  programs.hyprland.enable = true;
 
   # --- Audio (PipeWire) ---
   security.rtkit.enable = true;

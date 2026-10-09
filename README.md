@@ -1,6 +1,6 @@
 # nixos-vm-config
 
-NixOS for a QEMU VM: sway (or Hyprland) + foot + kakoune, with two accounts:
+NixOS for a QEMU VM: sway + foot + kakoune, with two accounts:
 
 - `user`: daily use, the only admin (`wheel`). Builds the system.
 - `pentest`: pentesting tools, deliberately **not** an admin. Can only change
@@ -36,8 +36,8 @@ would leave you with nothing to type into:
 
 1. Log in as `user`. If zsh shows a "new user" menu, press `q`. Run `hms`.
 2. Log in as `pentest` (password `changeme`). Run `passwd`, then `hms`.
-3. Back on the login screen (Ctrl+Alt+F1), choose **sway** in the session
-   field. ly remembers it.
+3. Back on the login screen (Ctrl+Alt+F1), log in normally; sway is the
+   only session.
 
 ## Day to day
 
@@ -54,8 +54,9 @@ would leave you with nothing to type into:
 The VM is meant to run **without 3D acceleration** (smaller attack surface on
 the host), so the guest draws everything on the CPU. To keep that cheap:
 
-- **Use sway, not Hyprland.** Sway draws with pixman (plain 2D); Hyprland
-  only draws through OpenGL, which Mesa then emulates on the CPU (llvmpipe).
+- **Sway draws with pixman** (plain 2D, set in `system/configuration.nix`).
+  Compositors that only draw through OpenGL, like Hyprland, get it emulated
+  on the CPU (llvmpipe), which is far more expensive.
 - **Video device: virtio-vga, 3D off** (`-device virtio-vga`, or virt-manager
   Video model "Virtio" without "3D acceleration"). VGA/Bochs/QXL have no
   hardware mouse cursor, so every mouse move makes the guest redraw.

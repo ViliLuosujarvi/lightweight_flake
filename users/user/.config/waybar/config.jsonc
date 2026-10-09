@@ -6,20 +6,11 @@
     "margin-left": 12,
     "margin-right": 12,
     "spacing": 8,
-    "modules-left": ["clock", "hyprland/workspaces", "sway/workspaces"],
+    "modules-left": ["clock", "sway/workspaces"],
     "modules-right": ["network", "cpu", "memory", "disk", "pulseaudio", "tray"],
 
     // Plain numbers; the focused workspace is styled in style.css
-    // (#workspaces button.active / .focused) so it stands out. Only one of
-    // these two modules is active: each disables itself under the other
-    // compositor.
-    "hyprland/workspaces": {
-        "format": "{id}",
-        "on-click": "activate",
-        "all-outputs": true,
-        "sort-by-number": true
-    },
-
+    // (#workspaces button.focused) so it stands out from the others.
     "sway/workspaces": {
         "format": "{name}",
         "all-outputs": true

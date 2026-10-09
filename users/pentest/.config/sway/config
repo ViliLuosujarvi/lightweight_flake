@@ -1,13 +1,9 @@
-# Sway, ported from ../hypr. The default session: in this VM (no 3D
-# acceleration) it draws with pixman, a plain 2D CPU renderer, which is far
-# cheaper than Hyprland's OpenGL-emulated-on-the-CPU (llvmpipe). The renderer
-# is chosen in system/configuration.nix (WLR_RENDERER=pixman).
+# Sway. In this VM (no 3D acceleration) it draws with pixman, a plain 2D CPU
+# renderer; that's set in system/configuration.nix (WLR_RENDERER=pixman).
 #
-# Same keys as Hyprland, with these differences:
-#   - Moving/resizing with the mouse: hold Alt (sway allows one modifier
-#     here), left-drag moves, right-drag resizes.
-#   - Ctrl+Alt+Shift+F1 / F2 switch tabbed / split layout (sway has no
-#     master/dwindle layouts).
+# Keys: $mod is Ctrl+Alt (see below). Moving/resizing with the mouse: hold
+# Alt, left-drag moves, right-drag resizes. Ctrl+Alt+Shift+F1 / F2 switch
+# tabbed / split layout.
 
 # -------- Variables -------------------------
 set $terminal foot
