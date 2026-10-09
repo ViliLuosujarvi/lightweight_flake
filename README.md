@@ -12,21 +12,39 @@ NixOS for a QEMU VM: sway + foot + kakoune, with two accounts:
    install on a legacy-BIOS VM (VirtualBox: "Enable EFI"; virt-manager/QEMU:
    UEFI/OVMF firmware).
 2. **x86_64** and network access during the install.
-3. **The installer's account is named `user`.** It then keeps the password you
-   set in the installer. `pentest` starts with `changeme`.
-4. **`/etc/nixos/hardware-configuration.nix` exists.** The installer generates
-   it; the config imports it, which is why builds use `--impure`.
+3. **With the graphical installer, name the account `user`.** It then keeps
+   the password you set there. Otherwise accounts start with `changeme`.
+4. **`/etc/nixos/hardware-configuration.nix` exists.** `nixos-generate-config`
+   (or the graphical installer) creates it; the config imports it, which is
+   why builds use `--impure`.
 
 ## Fresh install
 
-After installing NixOS, logged in as `user`:
+Either way, the system clones this repo into `/srv/nixos-config` by itself on
+first boot (`nixos-config-checkout` service), so there's no manual clone.
+
+**Option A: straight from the installer ISO with `nixos-install`.** Partition
+for UEFI (an EFI partition and a root partition), mount them under `/mnt`,
+then:
 
 ```sh
-sudo mkdir -p /srv/nixos-config
-sudo chown "$USER": /srv/nixos-config
-nix-shell -p git --run 'git clone https://github.com/ViliLuosujarvi/nixos-vm-config /srv/nixos-config'
+sudo nixos-generate-config --root /mnt
+# The config imports /etc/nixos/hardware-configuration.nix, and nixos-install
+# evaluates it on the live system, so put a copy where it will look:
+sudo cp /mnt/etc/nixos/hardware-configuration.nix /etc/nixos/
+sudo nixos-install --flake github:ViliLuosujarvi/nixos-vm-config#nixos-vm --impure
+reboot
+```
+
+`nixos-install` asks for a root password at the end. `user` and `pentest`
+both start with the password `changeme`.
+
+**Option B: after the graphical installer** (account named `user`), one
+rebuild:
+
+```sh
 sudo env NIX_CONFIG="experimental-features = nix-command flakes" \
-  nixos-rebuild switch --flake /srv/nixos-config#nixos-vm --impure
+  nixos-rebuild switch --flake github:ViliLuosujarvi/nixos-vm-config#nixos-vm --impure
 reboot
 ```
 
@@ -34,10 +52,15 @@ Then, **on a text console** (Ctrl+Alt+F2 at the login screen). Until `hms` has
 run there's no terminal app or window-manager config, so a graphical session
 would leave you with nothing to type into:
 
-1. Log in as `user`. If zsh shows a "new user" menu, press `q`. Run `hms`.
+1. Log in as `user`. If zsh shows a "new user" menu, press `q`. Run `passwd`
+   if you still have `changeme`, then `hms`.
 2. Log in as `pentest` (password `changeme`). Run `passwd`, then `hms`.
 3. Back on the login screen (Ctrl+Alt+F1), log in normally; sway is the
    only session.
+
+If `hms` says `/srv/nixos-config` has no flake, the first-boot clone hadn't
+finished (it needs the network): wait a moment, or run
+`sudo systemctl start nixos-config-checkout`.
 
 ## Day to day
 

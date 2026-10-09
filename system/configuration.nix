@@ -55,6 +55,29 @@
     config.safe.directory = "/srv/nixos-config";
   };
 
+  # Fills /srv/nixos-config on first boot (or first rebuild), so a fresh
+  # install needs no manual clone. Skipped once the repo is there, so it
+  # never touches an existing checkout.
+  systemd.services.nixos-config-checkout = {
+    description = "Clone the NixOS config into /srv/nixos-config";
+    wantedBy = [ "multi-user.target" ];
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" "systemd-tmpfiles-setup.service" ];
+    unitConfig.ConditionPathExists = "!/srv/nixos-config/.git";
+    path = [ pkgs.git ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "user"; # the clone belongs to user, like the folder
+      Group = "users";
+      # Afterwards, as root: apply pentest's write access to users/pentest,
+      # which only works on files that already exist.
+      ExecStartPost = "+${pkgs.systemd}/bin/systemd-tmpfiles --create --prefix=/srv/nixos-config";
+    };
+    script = ''
+      git clone https://github.com/ViliLuosujarvi/nixos-vm-config /srv/nixos-config
+    '';
+  };
+
   # Hooks direnv into zsh and ships nix-direnv (fast, cached `use flake`).
   programs.direnv.enable = true;
 
