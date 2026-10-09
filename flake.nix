@@ -1,5 +1,5 @@
 {
-  description = "NixOS VM config: Hyprland + foot + kakoune, with separate dev and pentest accounts";
+  description = "NixOS VM config: sway (or Hyprland) + foot + kakoune, with separate dev and pentest accounts";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
