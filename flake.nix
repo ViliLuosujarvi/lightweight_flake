@@ -1,5 +1,5 @@
 {
-  description = "NixOS VM config: sway + foot + kakoune, with separate dev and pentest accounts";
+  description = "NixOS VM config with separate dev and pentest accounts";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,7 +22,14 @@
       # packages and dotfiles without being in wheel.
       homeFor = name: home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [ ./users/${name}/home.nix ];
+        modules = [
+          ./common/home.nix
+          ./users/${name}/home.nix
+          {
+            home.username = name;
+            home.homeDirectory = "/home/${name}";
+          }
+        ];
       };
     in
     {
@@ -31,6 +38,8 @@
       # hand pentest root.
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
         inherit system;
+        # Where the checkout lives; system/configuration.nix and aliases.nix use it.
+        specialArgs.flakeDir = "/srv/nixos-vm-config";
         modules = [
           ./system/configuration.nix
           ./system/aliases.nix

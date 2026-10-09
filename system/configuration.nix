@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, flakeDir, ... }:
 
 {
   imports = [
@@ -14,7 +14,8 @@
 
   # --- Nix ---
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nixpkgs.config.allowUnfree = true;
+  # Unfree packages (burpsuite, claude-code) are only in the home profiles,
+  # whose package set allows them (flake.nix).
 
   networking.hostName = "nixos-vm";
   networking.networkmanager.enable = true;
@@ -36,65 +37,61 @@
   programs.zsh.enable = true;
 
   # --- Shared flake checkout ---
-  # This flake lives in /srv/nixos-vm-config, owned by "user", who commits and
-  # runs `nrs`. pentest gets write access to users/pentest only (ACL, incl.
-  # default entries so files either account creates stay writable by both),
-  # which is enough to edit its own home and `hms` it, but not the system
-  # config root builds. safe.directory lets pentest run git in the checkout.
-  #
-  # An existing checkout at the old path /srv/nixos-config: move it once with
-  #   sudo mv /srv/nixos-config /srv/nixos-vm-config
-  # and rebuild with the full path (nrs still points at the old one until then).
+  # This flake lives in flakeDir (set in flake.nix), owned by "user", who
+  # commits and runs `nrs`. pentest gets write access to users/pentest only
+  # (ACL, incl. default entries so files either account creates stay
+  # writable by both), which is enough to edit its own home and `hms` it,
+  # but not the system config root builds. safe.directory lets pentest run
+  # git in the checkout.
   systemd.tmpfiles.rules = [
-    "d /srv/nixos-vm-config 0755 user users - -"
-    "A+ /srv/nixos-vm-config/users/pentest - - - - user:pentest:rwX,default:user:pentest:rwX,default:user:user:rwX,mask::rwx,default:mask::rwx"
+    "d ${flakeDir} 0755 user users - -"
+    "A+ ${flakeDir}/users/pentest - - - - user:pentest:rwX,default:user:pentest:rwX,default:user:user:rwX,mask::rwx,default:mask::rwx"
   ];
   programs.git = {
     enable = true;
-    config.safe.directory = "/srv/nixos-vm-config";
+    config.safe.directory = flakeDir;
   };
 
-  # Fills /srv/nixos-vm-config on first boot (or first rebuild), so a fresh
+  # Fills flakeDir on first boot (or first rebuild), so a fresh
   # install needs no manual clone. Skipped once the repo is there, so it
   # never touches an existing checkout.
   systemd.services.nixos-vm-config-checkout = {
-    description = "Clone the NixOS config into /srv/nixos-vm-config";
+    description = "Clone the NixOS config into ${flakeDir}";
     wantedBy = [ "multi-user.target" ];
     wants = [ "network-online.target" ];
     after = [ "network-online.target" "systemd-tmpfiles-setup.service" ];
-    unitConfig.ConditionPathExists = "!/srv/nixos-vm-config/.git";
-    path = [ pkgs.git ];
+    unitConfig.ConditionPathExists = "!${flakeDir}/.git";
+    path = [ config.programs.git.package ];
     serviceConfig = {
       Type = "oneshot";
       User = "user"; # the clone belongs to user, like the folder
       Group = "users";
       # Afterwards, as root: apply pentest's write access to users/pentest,
       # which only works on files that already exist.
-      ExecStartPost = "+${pkgs.systemd}/bin/systemd-tmpfiles --create --prefix=/srv/nixos-vm-config";
+      ExecStartPost = "+${pkgs.systemd}/bin/systemd-tmpfiles --create --prefix=${flakeDir}";
     };
     script = ''
-      git clone https://github.com/ViliLuosujarvi/nixos-vm-config /srv/nixos-vm-config
+      git clone https://github.com/ViliLuosujarvi/nixos-vm-config ${flakeDir}
     '';
   };
-
-  # Hooks direnv into zsh and ships nix-direnv (fast, cached `use flake`).
-  programs.direnv.enable = true;
 
   # --- Login manager (ly) ---
   # TUI display manager with built-in background animations (none / doom /
   # matrix). `animation` sets the default; the key shown at the login screen
-  # switches it. The sway session comes from programs.sway below.
+  # switches it. The animation redraws the whole screen on the CPU, so it
+  # stops after a minute. The sway session comes from programs.sway below.
   services.displayManager.ly = {
     enable = true;
     settings = {
       animation = "matrix";
+      animation_timeout_sec = 60;
     };
   };
 
   # --- Sway ---
   # The VM has no 3D acceleration, so everything is drawn on the CPU. Sway
   # can draw with pixman, a plain 2D renderer; compositors that only draw
-  # through OpenGL (Hyprland, which this config used before) get it emulated
+  # through OpenGL (Hyprland, for example) get it emulated
   # on the CPU by Mesa (llvmpipe), which costs far more per redraw.
   programs.sway = {
     enable = true;
@@ -121,10 +118,10 @@
   };
 
   # --- CLI / packages ---
-  # foot, kakoune and waybar are user-level, managed via home-manager (users/<name>/home.nix)
+  # foot, kakoune and waybar are user-level, managed via home-manager (common/home.nix)
   # alongside their dotfiles, so they're not duplicated here.
+  # git comes from programs.git above.
   environment.systemPackages = with pkgs; [
-    git
     gh
     wget
     curl

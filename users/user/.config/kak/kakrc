@@ -1,9 +1,0 @@
-source "~/.config/kak/colors/red.kak"
-# old scheme, uncomment (and comment the line above) to revert:
-#source "~/.config/kak/colors/purple_best.kak"
-
-#source "~/.config/kak/colors/2.kak.bak"
-
-
-
-map global normal <space> 'i<space><esc>'

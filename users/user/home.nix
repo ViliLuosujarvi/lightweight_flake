@@ -1,46 +1,18 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
-let
-  configFilesOf = import ../../common/config-files.nix { inherit lib; };
-in
+# The "user" account: common/home.nix plus these. Its own dotfiles (themes,
+# colors) are in ./.config, on top of common/.config.
 {
-  imports = [ ../../common/home.nix ];
-
-  home.username = "user";
-  home.homeDirectory = "/home/user";
-
   # Programming / daily-use extras on top of the common desktop.
   home.packages = with pkgs; [
     proton-vpn
     freecad
   ];
 
-  # Emacs with every package .config/emacs/init.el `require`s; plain emacs
-  # has none of them and init.el stops at the first missing one.
-  #programs.emacs = {
-  #  enable = true;
-  #  extraPackages = epkgs: with epkgs; [
-  #    vertico
-  #    orderless
-  #    corfu
-  #    evil
-  #    projectile
-  #    treemacs
-  #    doom-modeline
-  #    dashboard
-  #    nerd-icons
-  #    nerd-icons-dired
-  #    nerd-icons-completion
-  #  ];
-  #};
-
+  # System zsh reads ~/.zshrc after /etc/zshrc, so aliases for programs only
+  # this account has live here.
   home.file.".zshrc".text = ''
     alias vpn=protonvpn-app
+    alias cad=freecad
   '';
-
-  # --- Dotfiles ---
-  # Everything under ./.config is symlinked in as-is. Derived from the laptop
-  # dotfiles (github.com/ViliLuosujarvi/.dotfiles) but trimmed for the VM:
-  # no blur/shadows/animations, no NVIDIA/multi-monitor/Steam/Discord bits.
-  xdg.configFile = configFilesOf ./.config;
 }

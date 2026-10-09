@@ -1,18 +1,22 @@
-{ pkgs, ... }:
+{ pkgs, lib, flakeDir, ... }:
 
-# System-wide shell aliases and zsh history settings. Because these live in
-# the NixOS config (/etc/zshrc, /etc/bashrc) they apply to every user, not
-# just "user". Trimmed from to_be_incorporated/aliases: personal directory
-# jumps, pentesting (nmap), Discord/Steam and other host-specific bits
-# were left out.
+# System-wide shell aliases and zsh settings. Because these live in the NixOS
+# config (/etc/zshrc, /etc/bashrc) they apply to every user, not just "user".
+# Aliases for programs only one account has go in that account's home.nix.
 let
-  flake = "/srv/nixos-vm-config";
+  systemFlake = "--flake ${flakeDir}#nixos-vm --impure";
 in
 {
   environment.systemPackages = with pkgs; [
     lsd # used by the ls aliases below
-    fzf # Ctrl-R / Ctrl-T / Alt-C in zsh, see interactiveShellInit
   ];
+
+  # Ctrl-R (history), Ctrl-T (files), Alt-C (cd) and fuzzy Tab completion
+  # (`**<Tab>`) in zsh.
+  programs.fzf = {
+    keybindings = true;
+    fuzzyCompletion = true;
+  };
 
   environment.shellAliases = {
     # NixOS + home-manager, all against the shared checkout (see
@@ -23,20 +27,16 @@ in
     # hms runs homeConfigurations.$USER; -b bak moves an existing unmanaged
     # file aside instead of aborting. Clean-up: ngc / nix-delete-all-generations
     # (functions, see interactiveShellInit).
-    nrs = "sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure";
-    nrt = "sudo nixos-rebuild test --flake ${flake}#nixos-vm --impure";
-    nrb = "nixos-rebuild build --flake ${flake}#nixos-vm --impure";
-    hms = "home-manager switch -b bak --flake ${flake}#$USER";
-    nfu = "nix flake update --flake ${flake}";
-    nup = "nix flake update --flake ${flake} && sudo nixos-rebuild switch --flake ${flake}#nixos-vm --impure && home-manager switch -b bak --flake ${flake}#$USER";
+    nrs = "sudo nixos-rebuild switch ${systemFlake}";
+    nrt = "sudo nixos-rebuild test ${systemFlake}";
+    nrb = "nixos-rebuild build ${systemFlake}";
+    hms = "home-manager switch -b bak --flake ${flakeDir}#$USER";
+    nfu = "nix flake update --flake ${flakeDir}";
+    nup = "nfu && nrs && hms"; # the shell expands the aliases in here too
     nd = "nix develop";
     ns = "nix-shell";
 
-    c = "cd /srv/nixos-vm-config/";
-
-
-    # Programs
-    cad = "freecad";
+    c = "cd ${flakeDir}";
 
     # Icons for files/folders in the terminal
     ls = "lsd";
@@ -63,67 +63,82 @@ in
   };
 
   programs.zsh = {
+    # Also sets HISTFILE (~/.zsh_history) and SAVEHIST.
     histSize = 10000;
     setOptions = [ "APPEND_HISTORY" ];
-    interactiveShellInit = ''
-      HISTFILE=~/.zsh_history
-      SAVEHIST=10000
-      source <(${pkgs.fzf}/bin/fzf --zsh)
 
-      # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
-      source ${./git-aliases.zsh}
+    # compinit is run below instead, with -C: the default one re-checks every
+    # completion directory on each shell start. The dump file is named after
+    # the current system and home-manager generations, so it's rebuilt only
+    # when either changes (i.e. when completions could have changed).
+    enableGlobalCompInit = false;
 
-      # Tab completion (case-insensitive, menu, colors, typo fixes) and
-      # word-by-word accepting of autosuggestions.
-      source ${./completion.zsh}
+    interactiveShellInit = lib.mkMerge [
+      (lib.mkBefore ''
+        () {
+          local dump=~/.cache/zcompdump-''${''${:-/run/current-system}:A:t}-''${''${:-$HOME/.nix-profile}:A:t}
+          # New generation: drop the dumps of older ones.
+          [[ -e $dump ]] || { mkdir -p ~/.cache; rm -f ~/.cache/zcompdump-*(N) }
+          autoload -U compinit
+          compinit -C -d $dump
+        }
+      '')
 
-      # Nix clean-up: delete old generations, then garbage-collect the store.
-      # Plain nix-collect-garbage only reaches your own profiles, so accounts
-      # in wheel also clean the system's (sudo), which removes old boot
-      # entries from the menu on the next nrs. Without rollback afterwards.
-      #   ngc 7d                      generations older than 7 days
-      #   nix-delete-all-generations  everything but the current ones
-      _nix_gc() {
-        nix-collect-garbage "$@" || return
-        if id -nG | grep -qw wheel; then
-          sudo nix-collect-garbage "$@"
-        fi
-      }
-      ngc() {
-        if [[ -z $1 ]]; then
-          print -u2 "usage: ngc <age>, e.g. ngc 7d"
-          return 1
-        fi
-        _nix_gc --delete-older-than "$1"
-      }
-      nix-delete-all-generations() { _nix_gc -d }
-    '';
+      ''
+        # Git aliases (g, gav, gcam, gst, ... the oh-my-zsh git plugin set)
+        source ${./git-aliases.zsh}
+
+        # Nix clean-up: delete old generations, then garbage-collect the store.
+        # Plain nix-collect-garbage only reaches your own profiles, so accounts
+        # in wheel also clean the system's (sudo), which removes old boot
+        # entries from the menu on the next nrs. Without rollback afterwards.
+        #   ngc 7d                      generations older than 7 days
+        #   nix-delete-all-generations  everything but the current ones
+        _nix_gc() {
+          nix-collect-garbage "$@" || return
+          if id -nG | grep -qw wheel; then
+            sudo nix-collect-garbage "$@"
+          fi
+        }
+        ngc() {
+          if [[ -z $1 ]]; then
+            print -u2 "usage: ngc <age>, e.g. ngc 7d"
+            return 1
+          fi
+          _nix_gc --delete-older-than "$1"
+        }
+        nix-delete-all-generations() { _nix_gc -d }
+      ''
+
+      # After the zsh-autosuggestions (default order) and
+      # zsh-syntax-highlighting (mkAfter) plugins: completion.zsh overrides
+      # the suggestion strategy the autosuggestions module sets, and
+      # history-substring-search has to come after syntax-highlighting.
+      (lib.mkOrder 2000 ''
+        # Tab completion (case-insensitive, menu, colors, typo fixes) and
+        # the autosuggestion settings.
+        source ${./completion.zsh}
+
+        # Type part of a command, then Up/Down cycles only through history
+        # lines containing it (case-insensitive).
+        source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+        bindkey '^[[A' history-substring-search-up
+        bindkey '^[OA' history-substring-search-up
+        bindkey '^[[B' history-substring-search-down
+        bindkey '^[OB' history-substring-search-down
+      '')
+    ];
 
     # NixOS runs promptInit after interactiveShellInit, and its default is
     # `prompt suse`, which would overwrite our PROMPT. So the prompt, alias
     # reminders and command-not-found hints are loaded here instead.
     promptInit = ''
       source ${./prompt.zsh}
-
-      # Type part of a command, then Up/Down cycles only through history
-      # lines containing it (case-insensitive). Loaded here because it has
-      # to come after zsh-syntax-highlighting.
-      source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-      bindkey '^[[A' history-substring-search-up
-      bindkey '^[OA' history-substring-search-up
-      bindkey '^[[B' history-substring-search-down
-      bindkey '^[OB' history-substring-search-down
-
-      # Autosuggestions: folders first for `cd` (cd_dirs, in completion.zsh),
-      # then history, then what Tab would complete. Set here because the
-      # autosuggestions module resets it after completion.zsh is sourced, and
-      # its strategy option only accepts the built-in names.
-      ZSH_AUTOSUGGEST_STRATEGY=(cd_dirs history completion)
     '';
 
     # Commands turn red as you type if they don't exist, green if they do;
     # greyed-out suggestions (right arrow to accept): folders for `cd`,
-    # otherwise history (see promptInit).
+    # otherwise history (see completion.zsh).
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
   };

@@ -1,0 +1,23 @@
+/* Red palette: black background, reds only */
+@define-color color0 #000000; /* Background */
+@define-color color1 #ff2b2b; /* Main red */
+@define-color color2 #ff2b2b; /* Main red */
+@define-color color3 #ff3b14; /* Neon red */
+@define-color color4 #cc0000;
+@define-color color5 #b11a1a;
+@define-color color6 #ff4d4d;
+@define-color color7 #ffc8c8; /* Light text */
+@define-color color8 #1a0303; /* Darker background */
+@define-color color9 #ff7d7d;
+@define-color color10 #3d0a0a; /* Dim red */
+@define-color color11 #5a0f0f;
+@define-color color12 #8f1111;
+@define-color color13 #a81a1a;
+@define-color color14 #ff6666;
+@define-color color15 #ffe0e0; /* Lightest text */
+@define-color color16 #ff2b2b; /* Accent */
+
+/* Module colors (used by common/.config/waybar/style.css) */
+@define-color cpu @color4;
+@define-color audio @color4;
+@define-color disk @color4;

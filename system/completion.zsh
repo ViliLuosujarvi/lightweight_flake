@@ -1,6 +1,6 @@
-# Tab completion and line-editing helpers. Sourced from aliases.nix
-# (programs.zsh.interactiveShellInit), which /etc/zshrc runs after compinit,
-# so it applies to every user.
+# Tab completion, autosuggestion settings and line-editing helpers. Sourced
+# from aliases.nix (programs.zsh.interactiveShellInit, after compinit and the
+# autosuggestions/syntax-highlighting plugins), so it applies to every user.
 
 # --- Completion -------------------------------------------------------------
 # Plain completion first; if nothing matches, allow typos (_approximate).
@@ -30,11 +30,19 @@ zstyle ':completion:*:warnings' format '%F{red}-- no matches --%f'
 bindkey '^[[1;5C' forward-word
 bindkey '^[f' forward-word
 
-# For `cd`, suggest a matching folder in the current directory before history
-# (enabled via ZSH_AUTOSUGGEST_STRATEGY in aliases.nix). Exact case wins, else
-# case-insensitive. The suggestion can only append to what's typed, so
-# `cd ge` shows `cd ge|neral/`; _cd_fix_case turns that into `cd General/`
-# on Enter, if that path doesn't exist and exactly one folder matches.
+# Where the grey suggestion comes from: folders for `cd` (cd_dirs, below),
+# otherwise history. Set here because the autosuggestions module only accepts
+# its built-in strategy names, and resets this before this file is sourced.
+ZSH_AUTOSUGGEST_STRATEGY=(cd_dirs history)
+# Wrap the line-editor widgets once, at the first prompt, instead of again
+# before every prompt (all plugins are loaded by then).
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+# For `cd`, suggest a matching folder in the current directory before history.
+# Exact case wins, else case-insensitive. The suggestion can only append to
+# what's typed, so `cd ge` shows `cd ge|neral/`; _cd_fix_case turns that into
+# `cd General/` on Enter, if that path doesn't exist and exactly one folder
+# matches.
 _zsh_autosuggest_strategy_cd_dirs() {
   emulate -L zsh -o extendedglob
   [[ $1 == cd\ * ]] || return

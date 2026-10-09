@@ -1,43 +1,6 @@
-/* Define Solarized Dark colors */
-@define-color color0 #002b36; /* Base03 (Dark background color)  */
-@define-color color1 #dc322f; /* Red */
-/*@define-color color2 #859900;  Green */
-@define-color color2 #00e676;  /*#39ff14 Neon Green */
-/*@define-color color3 #b58900;  Yellow */
-@define-color color3 #ffea00;  /*#ffd300  Neon Yellow */
-@define-color color4 #3da5ff;  /*#268bd2  Blue */
-@define-color color5 #7c7cff;  /*#d33682  Magenta */
-@define-color color6 #00d4c7;  /*#2aa198 Cyan */
-@define-color color7 #eee8d5; /* Light background (Base2) */
-@define-color color8 #073642; /* Darker background (Base02) */
-@define-color color9 #ff6d00;  /*#cb4b16  Orange */
-@define-color color10 #586e75; /* Base01 (Soft dark gray) */
-@define-color color11 #657b83; /* Base00 (Neutral gray */
-@define-color color12 #839496; /* Base0 (Light gray */
-@define-color color13 #6c71c4; /* Violet */
-@define-color color14 #93a1a1; /* Base1 (Slightly lighter gray)*/
-@define-color color15 #fdf6e3; /* Base3 (Lightest background color) */
-@define-color color16 #FB008F;  /* Vibrant Magenta */
+/* Colors: each account's own palette, from its users/<name>/.config. */
+@import url("colors.css");
 
-
-/* Nord theme colors (commented out) */
-
-/* @define-color color0 #2e3440; */
-/* @define-color color1 #3b4252; */
-/* @define-color color2 #434c5e; */
-/* @define-color color3 #4c566a; */
-/* @define-color color4 #d8dee9; */
-/* @define-color color5 #e5e9f0; */
-/* @define-color color6 #eceff4; */
-/* @define-color color7 #8fbcbb; */
-/* @define-color color8 #88c0d0; */
-/* @define-color color9 #81a1c1; */
-/* @define-color color10 #5e81ac; */
-/* @define-color color11 #bf616a; */
-/* @define-color color12 #d08770; */
-/* @define-color color13 #ebcb8b; */
-/* @define-color color14 #a3be8c; */
-/* @define-color color15 #b48ead; */
 
 /*Generic element rainbow border*/
 /*@keyframes rainbow-border {
@@ -466,8 +429,8 @@ window#waybar {
 
 #cpu,
 #temperature {
-    border-bottom-color: @color13; /* USed to be @color4*/
-    color: @color13
+    border-bottom-color: @cpu; /* USed to be @color4*/
+    color: @cpu;
 }
 
 #custom-nvidia {
@@ -544,8 +507,8 @@ window#waybar {
 
 #pulseaudio,
 #backlight {
-    border-bottom-color: @color2;    
-    color: @color2;
+    border-bottom-color: @audio;    
+    color: @audio;
 }
 
 #pulseaudio.muted {
@@ -583,8 +546,8 @@ window#waybar {
 }
 
 #disk {
-    border-bottom-color: @color6;  /*used to be @color13 */
-    color: @color6;
+    border-bottom-color: @disk;  /*used to be @color13 */
+    color: @disk;
 }
 
 #system-info {

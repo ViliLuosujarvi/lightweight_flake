@@ -1,0 +1,4 @@
+# Colors: each account's own, from its users/<name>/.config.
+source "~/.config/kak/colors/account.kak"
+
+map global normal <space> 'i<space><esc>'

@@ -6,6 +6,11 @@ NixOS for a QEMU VM: sway + foot + kakoune, with two accounts:
 - `pentest`: pentesting tools, deliberately **not** an admin. Can only change
   its own home (`users/pentest/`) and apply it with `hms`.
 
+Desktop config both accounts share (sway, foot, waybar layout, ...) is in
+`common/.config`, which only `user` can change. Each account's own files
+(colors, themes) are in `users/<name>/.config`; a file there with the same
+path as a shared one replaces it for that account.
+
 ## What a fresh install needs
 
 1. **The VM boots in UEFI mode.** The config uses systemd-boot, which can't

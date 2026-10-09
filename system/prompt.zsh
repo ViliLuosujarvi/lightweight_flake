@@ -12,17 +12,19 @@ autoload -Uz add-zsh-hook
 
 # --- Git info ---------------------------------------------------------------
 # One `git status` call per prompt: branch, ahead/behind, staged, modified,
-# untracked. Printed as "(branch * +1 ~2 ?3 ahead 1 behind 1) " in yellow,
-# nothing outside a repository.
+# untracked. Stored in _prompt_git_info as
+# "(branch * +1 ~2 ?3 ahead 1 behind 1) " in yellow; empty outside a
+# repository (git status prints nothing there).
 #
 # `git status` honours the repository's own .git/config, so just cd-ing into a
 # downloaded repo (a dumped .git from a target, an extracted tarball) could
 # run its core.fsmonitor command; that is switched off here. A filter driver
 # in that config could still run, so accounts that handle untrusted repos set
 # PROMPT_NO_GIT=1 in ~/.zshrc to leave git out of the prompt entirely.
+typeset -g _prompt_git_info=""
 function _prompt_git() {
+  _prompt_git_info=""
   [[ -n $PROMPT_NO_GIT ]] && return
-  command git rev-parse --is-inside-work-tree &>/dev/null || return
 
   local branch="" ahead=0 behind=0 staged=0 modified=0 untracked=0 line
   while IFS= read -r line; do
@@ -40,6 +42,7 @@ function _prompt_git() {
       '? '*) (( untracked++ )) ;;
     esac
   done < <(command git -c core.fsmonitor=false status --porcelain=v2 --branch 2>/dev/null)
+  [[ -z $branch ]] && return   # not in a work tree
 
   [[ $branch == '(detached)' ]] && branch=$(command git rev-parse --short HEAD 2>/dev/null)
   # The prompt expands % sequences after substituting this in, so a branch
@@ -53,26 +56,22 @@ function _prompt_git() {
   (( untracked )) && out+=" %F{blue}?${untracked}%F{yellow}"
   (( ahead ))     && out+=" %F{cyan}ahead ${ahead}%F{yellow}"
   (( behind ))    && out+=" %F{cyan}behind ${behind}%F{yellow}"
-  print -rn -- "$out)%f "
+  _prompt_git_info="$out)%f "
 }
-
-# --- Per-prompt state -------------------------------------------------------
-typeset -g _prompt_git_info=""
-function _prompt_precmd() {
-  _prompt_git_info=$(_prompt_git)
-}
-add-zsh-hook precmd _prompt_precmd
+add-zsh-hook precmd _prompt_git
 
 # Python virtualenv name, if one is active.
+typeset -g _prompt_venv_info=""
 function _prompt_venv() {
-  [[ -n $VIRTUAL_ENV ]] && print -rn -- "%F{cyan}(${${VIRTUAL_ENV:t}//\%/%%})%f "
+  _prompt_venv_info=${VIRTUAL_ENV:+"%F{cyan}(${${VIRTUAL_ENV:t}//\%/%%})%f "}
 }
+add-zsh-hook precmd _prompt_venv
 
 # --- Prompt -----------------------------------------------------------------
-# Same layout as to_be_incorporated/zsh: a blank line, then
-# user @ host (git) (venv) full path, then current folder and the prompt char.
+# A blank line, then user @ host (git) (venv) full path, then current folder
+# and the prompt char.
 PROMPT=$'\n'
-PROMPT+='%F{magenta}%n%f @ %F{magenta}%m%f ${_prompt_git_info}$(_prompt_venv)%F{green}%~%f'$'\n'
+PROMPT+='%F{magenta}%n%f @ %F{magenta}%m%f ${_prompt_git_info}${_prompt_venv_info}%F{green}%~%f'$'\n'
 PROMPT+='%F{yellow}%1~%f %F{magenta}%(!.#.$)%f '
 PROMPT2='%F{8}\ %f'
 

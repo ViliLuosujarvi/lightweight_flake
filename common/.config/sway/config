@@ -17,10 +17,8 @@ output * bg #000000 solid_color
 default_border pixel 2
 default_floating_border pixel 2
 gaps inner 4
-# class                 border  backgr. text    indicator child_border
-client.focused          #00ff41 #00ff41 #000000 #00ff41   #00ff41
-client.focused_inactive #0a3d14 #0a3d14 #00ff41 #0a3d14   #0a3d14
-client.unfocused        #0a3d14 #0a3d14 #00ff41 #0a3d14   #0a3d14
+# Window border colors: each account's own, from its users/<name>/.config.
+include ~/.config/sway/colors
 
 # -------- Input -----------------------------
 input type:keyboard {
@@ -67,7 +65,7 @@ bindsym $mod+Shift+F2 layout default
 # stacked; press it again to switch back).
 bindsym $mod+s split toggle
 # Alt+Tab: flip the split of the focused window's container. When it holds
-# just the pair, this works like Hyprland's togglesplit.
+# just the pair, the two swap between side by side and stacked.
 bindsym Mod1+Tab layout toggle split
 
 # -------- General applications --------------
