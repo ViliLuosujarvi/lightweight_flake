@@ -18,7 +18,6 @@
     waybar
     fastfetch
     btop
-    kitty
     rofi
     firefox
     networkmanagerapplet
@@ -26,7 +25,7 @@
     claude-code
 
 
-    # foot, kitty and waybar configs all use "FiraCode Nerd Font Mono"
+    # foot and emacs use "FiraCode Nerd Font"
     nerd-fonts.fira-code
   ];
 
